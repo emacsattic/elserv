@@ -1,5 +1,22 @@
 2001-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* es-monitor.el: New file.
+
+	* elserv.el (elserv-publish): Added description as first argument.
+	(elserv-execute-service-maybe): Renamed from
+	elserv-call-service-function-maybe.
+	(elserv-execute-service-maybe): Use intern-soft instead of intern.
+	(elserv-service-directory): Added argument `doc'.
+	(elserv-service-string): Ditto.
+	(elserv-service-function): Ditto.
+	(elserv-publish-default): Publish monitor.
+
+	* es-demo.el (elserv-demo-publish): Added description.
+
+	* es-wiki.el (elserv-wiki-publish): Ditto.
+
+	* es-mhc.el (elserv-mhc-publish): Ditto.
+
 	* es-mhc.el (elserv-mhc-icon-publish-path): New user option.
 	(elserv-mhc-icon-path): Changed default value as elserv-icon-path.
 	(elserv-mhc/icon-setup): Eliminated.

@@ -467,7 +467,8 @@ PROCESS is the elserv server process.
 PATH is the path to publish MHC content."
   (mhc-face-setup)
   (setq elserv-mhc/path path)
-  (elserv-publish process path :function 'elserv-mhc-function)
+  (elserv-publish process path :function 'elserv-mhc-function
+		  :description "MHC Calendar")
   (elserv-publish process
 		  (expand-file-name "schedule" path)
 		  :function 'elserv-mhc-article-function)

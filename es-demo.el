@@ -221,7 +221,8 @@ PATH is the path to publish DEMO content."
 <hr> Powered by <a href=\"http://www.gohome.org/elserv\">" (elserv-version) "</a>
 </body></html>")
 		   'iso-2022-jp)
-		  :content-type "text/html; charset=ISO-2022-JP")
+		  :content-type "text/html; charset=ISO-2022-JP"
+		  :description "Elserv demonstration.")
   (elserv-publish (elserv-find-process)
 		  (concat path "/calendar")
 		  :function 'elserv-demo-calendar)

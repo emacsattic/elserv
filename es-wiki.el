@@ -300,7 +300,8 @@
   "Publish Wiki service.
 PROCESS is the elserv server process.
 PATH is the path to publish Wiki content."
-  (elserv-publish process path :function 'elserv-wiki-function))
+  (elserv-publish process path :function 'elserv-wiki-function
+		  :description "Emacs Wiki."))
 
 (defun elserv-wiki-start (&optional port)
   "Start a Wiki Server."

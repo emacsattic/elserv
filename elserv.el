@@ -904,7 +904,7 @@ Otherwise, RESULT is set as authenticated and return nil."
 PROCESS is the server process of Elserv.
 PATH is the requested path.
 Rest of arguments ARGS are plist of the form (:ATTR1 VAL1 :ATTR2 VAL2 ...)."
-  (let (data set-auth auth predicate host)
+  (let (data set-auth auth predicate host doc)
     ;; Virtual host.
     (if (setq host (plist-get args :host))
 	(setq path (concat host path)))
@@ -915,18 +915,21 @@ Rest of arguments ARGS are plist of the form (:ATTR1 VAL1 :ATTR2 VAL2 ...)."
 		    :realm (plist-get set-auth :realm)
 		    :users (plist-get set-auth :users))))
       (setq predicate (elserv-make-predicate-from-plist args))
+      (setq doc (plist-get args :description))
       (cond
        ((setq data (plist-get args :directory)) ; directory is set.
 	(set (intern path elserv-buffer-publish-hash)
-	     (list 'elserv-service-directory auth predicate data)))
+	     (list 'elserv-service-directory
+		   doc auth predicate data)))
        ((setq data (plist-get args :string))    ; string is set.
 	(set (intern path elserv-buffer-publish-hash)
 	     (list 'elserv-service-string
-		   auth predicate data
+		   doc auth predicate data
 		   (plist-get args :content-type))))
        ((setq data (plist-get args :function))   ; handler is set.
 	(set (intern path elserv-buffer-publish-hash)
-	     (nconc (list 'elserv-service-function auth predicate data
+	     (nconc (list 'elserv-service-function
+			  doc auth predicate data
 			  (plist-get args :content-type)))))))))
 
 (defun elserv-unpublish (process path)
@@ -936,14 +939,17 @@ PATH is the requested path."
   (with-current-buffer (process-buffer process)
     (unintern path elserv-buffer-publish-hash)))
 
-(defsubst elserv-call-service-function-maybe (ppath path host request)
+(defsubst elserv-execute-service-maybe (ppath path host request)
   "Call service function for PPATH, PATH, HOST and REQUEST, if registered.
 Return result structure. If function is not registered, return nil."
   (let (sym func)
-    (when (and (or (boundp (setq sym (intern (concat host ppath)
-					     elserv-buffer-publish-hash)))
-		   (boundp (setq sym (intern ppath
-					     elserv-buffer-publish-hash))))
+    (when (and (or (setq sym (intern-soft 
+			      (concat host ppath)
+			      elserv-buffer-publish-hash))
+		   (setq sym (intern-soft
+			      ppath
+			      elserv-buffer-publish-hash)))
+	       (boundp sym)
 	       (setq func (append (symbol-value sym)
 				  (list path ppath request))))
       (apply (car func) (cdr func)))))
@@ -977,7 +983,7 @@ REQUEST is the request structure."
 	  (setq ppath "/"))
 	(when (string= ppath "/")
 	  (setq rpath path))
-	(if (setq result (elserv-call-service-function-maybe
+	(if (setq result (elserv-execute-service-maybe
 			  ppath rpath
 			  host request))
 	    (setq path-list nil))
@@ -1009,8 +1015,9 @@ REQUEST is the request structure."
 	      filename)))
     filename))
 
-(defun elserv-service-directory (auth predicate root path ppath request)
+(defun elserv-service-directory (doc auth predicate root path ppath request)
   "Service a directory.
+DOC is the documentation of the service.
 AUTH is the autenticator plist.
 PREDICATE is the predicate to check a request.
 ROOT is the top directory recorded by `elserv-publish'.
@@ -1065,9 +1072,10 @@ REQUEST is the request structure (plist)."
 			   (concat (unless (string= ppath "/") ppath)
 				   path))))))))
 
-(defun elserv-service-string (auth predicate string content-type path ppath
-				   request)
+(defun elserv-service-string (doc auth predicate string content-type path ppath
+				  request)
   "Service a string.
+DOC is the documentation of the service.
 AUTH is the autenticator plist.
 PREDICATE is the predicate to check a request.
 STRING is the content string recorded by `elserv-publish'.
@@ -1085,9 +1093,10 @@ REQUEST is the request structure (plist)."
 	  (elserv-set-result-body result string)
 	  result))))
 
-(defun elserv-service-function (auth predicate function
+(defun elserv-service-function (doc auth predicate function
 				     content-type path ppath request)
   "Service by a function.
+DOC is the documentation of the service.
 AUTH is the autenticator plist.
 PREDICATE is the predicate to check a request.
 FUNCTION is the symbol of the function registered.
@@ -1125,13 +1134,15 @@ NAME is the name of the package to publish."
 
 (defun elserv-publish-default (process)
   "Publish default pages for PROCESS."
-  (elserv-publish process "/" :string "Hello World." :content-type "text/html")
+  ;; Publish monitor.
+  (elserv-package-publish process "/" "monitor")
+  (elserv-package-publish process "/monitor" "monitor")
   ;; Publish icons.
   (if (and elserv-icon-path
 	   (file-directory-p elserv-icon-path))
       (elserv-publish process elserv-icon-publish-path
 		      :directory elserv-icon-path)))
-  
+
 (provide 'elserv)
 
 ;;; elserv.el ends here
