@@ -1,5 +1,15 @@
 2001-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elservd: Removed.
+
+	* elservd.in: New file.
+
+	* Makefile (GOMI): Added elservd.
+
+	* ELSERV-MK (config-ruby): New function.
+	(config-elserv): Call `config-ruby'.
+	(config-elserv-package): Ditto.
+
 	* COPYING: New file.
 
 	* es-wiki.el (elserv-wiki-function): Redirect "" to "/".

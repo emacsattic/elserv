@@ -17,7 +17,7 @@ PACKAGE_DIR = NONE
 EXEC_DIR = NONE
 ICON_DIR = NONE
 
-GOMI	= *.elc auto-autoloads.el custom-load.el
+GOMI	= *.elc auto-autoloads.el custom-load.el elservd
 
 elc:
 	$(EMACS) $(FLAGS) -f compile-elserv \

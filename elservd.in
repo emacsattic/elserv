@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!@ruby@
 # -*- ruby -*-
 # elservd - A daemon process for elserv
 # Yuuichi Teranishi <teranisi@gohome.org>

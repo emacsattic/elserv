@@ -15,9 +15,6 @@
     (require 'install)
   (error (error "Please install APEL 8.7 or later.")))
 
-(or (exec-installed-p "ruby")
-    (error "Please install ruby first."))
-
 (defvar PREFIX install-prefix)
 (defvar LISP_BASE_DIR (install-detect-elisp-directory PREFIX))
 
@@ -64,8 +61,26 @@
 	    icon-dir)))
   (setq command-line-args-left (cdr command-line-args-left)))
 
+(defun config-ruby ()
+  (unless (file-exists-p (expand-file-name "elservd" EXEC_SRC_DIR))
+    (let ((path (exec-installed-p "ruby")))
+      (unless path
+	(error "Please install ruby first."))
+      (with-temp-buffer
+	(insert-file-contents (expand-file-name "elservd.in" EXEC_SRC_DIR))
+	(goto-char (point-min))
+	(if (search-forward "@ruby@")
+	    (replace-match path))
+	(write-region (point-min) (point-max)
+		      (expand-file-name "elservd" EXEC_SRC_DIR) nil
+		      'no-msg)
+	(set-file-modes (expand-file-name "elservd" EXEC_SRC_DIR)
+			(+ (* 64 7)(* 8 5) 5)) ; 0755
+	(princ "elservd is created.")))))
+
 (defun config-elserv (&optional silent)
   (let (prefix lisp-dir exec-dir)
+    (config-ruby)
     (and (setq prefix (car command-line-args-left))
 	 (or (string-equal "NONE" prefix)
 	     (setq PREFIX prefix)))
@@ -100,6 +115,7 @@
 
 (defun config-elserv-package ()
   (let (package-dir exec-dir)
+    (config-ruby)
     (and (setq package-dir (car command-line-args-left))
 	 (or (string= "NONE" package-dir)
 	     (setq PACKAGE_DIR package-dir)))
