@@ -47,12 +47,12 @@
 ;;
 ;; or write following lines in your .emacs.
 ;;
-;; (autoload elserv-start "elserv" nil t)
+;; (autoload 'elserv-start "elserv" nil t)
 ;; (add-hook 'elserv-start-hook
-;;           '(lambda ()
-;;              (elserv-publish (elserv-find-process) "/"
-;;                              :string "Hello World."
-;;                              :content-type "text/plain")))
+;;           (lambda ()
+;;             (elserv-publish (elserv-find-process) "/"
+;;                             :string "Hello World."
+;;                             :content-type "text/plain")))
 
 ;;; History:
 ;;
