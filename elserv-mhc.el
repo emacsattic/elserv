@@ -386,12 +386,15 @@ Example:
 				      (plist-get request 'body))))
 		       path)))
 	  charset)
+      (if (eq (aref month 0) ?/)
+	  (setq month (substring month 1)))
       (if (<= (length month) 1)
 	  (setq month (mhc-date-now))
 	(setq month (apply
 		     (lambda (x y z) (mhc-date-new x y z))
 		     (nconc (mapcar 'string-to-number
-				    (split-string month "/")) (list 1)))))
+				    (split-string month "/"))
+			    (list 1)))))
       (elserv-mhc-month month)
       (setq charset (detect-mime-charset-region (point-min)(point-max)))
       (elserv-set-result-header

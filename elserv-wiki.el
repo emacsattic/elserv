@@ -276,15 +276,15 @@
     (cond
      ((eq (length path) 0) ; default page.
       (elserv-wiki-render-page result emacs-wiki-default-page))
-     ((string-match "\\`wiki\\?\\(.+\\)" path)
+     ((string-match "\\`/wiki\\?\\(.+\\)" path)
       (elserv-wiki-render-page result (match-string 1 path)))
-     ((string-match "\\`editwiki\\?\\(.+\\)" path)
+     ((string-match "\\`/editwiki\\?\\(.+\\)" path)
       (elserv-wiki-edit-page result (match-string 1 path)))
-     ((string-match "\\`changewiki\\?post" path)
+     ((string-match "\\`/changewiki\\?post" path)
       (elserv-wiki-change-page result request))
-     ((string-match "\\`searchwiki\\?get" path)
+     ((string-match "\\`/searchwiki\\?get" path)
       (elserv-wiki-search-input-page result))
-     ((string-match "\\`searchwiki\\?q=\\(.+\\)" path)
+     ((string-match "\\`/searchwiki\\?q=\\(.+\\)" path)
       (elserv-wiki-search-page result (match-string 1 path)))
      (t (signal 'elserv-file-not-found
 		"Specified Wiki page was not found.")))))

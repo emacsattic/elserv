@@ -892,14 +892,11 @@ Return result structure. If function is not registered, return nil."
 
 (defun elserv-parse-path (path)
   "Return a reversed list of substrings of PATH which are separated by '/'."
-  (let ((start (if (eq (aref path 0) ?/) 1 0))
-	parts)
+  (let ((start 0) parts)
     (while (string-match "/" path start)
       (setq parts (cons (substring path start (match-beginning 0)) parts)
 	    start (match-end 0)))
-    (if (eq (length path) start)
-	parts
-      (cons (substring path start) parts))))
+    (cons (substring path start) parts)))
 
 (defun elserv-service (process path request)
   "Provide a service.
@@ -907,7 +904,7 @@ PROCESS is the server process of Elserv.
 PATH is the requested path string.
 REQUEST is the request structure."
   (let ((host (plist-get request 'host))
-	path-list ppath result)
+	path-list ppath rpath result)
     ;; absolute URI.
     (when (string-match "^http://\\([^/]+\\)\\(/\\)" path)
       (setq host (substring path (match-beginning 1) (match-end 1))
@@ -915,18 +912,19 @@ REQUEST is the request structure."
     (setq path-list (elserv-parse-path path))
     (with-current-buffer (process-buffer process)
       (while path-list
-	(setq ppath (concat "/" (mapconcat 'identity
-					   (reverse path-list) "/")))
+	(setq ppath (concat (mapconcat 'identity
+				       (reverse path-list) "/"))
+	      rpath (substring path (length ppath)))
+	(when (eq (length ppath) 0)
+	  (setq ppath "/"))
+	(when (string= ppath "/")
+	  (setq rpath path))
 	(if (setq result (elserv-call-service-function-maybe
-			  ppath (substring path (length ppath))
+			  ppath rpath
 			  host request))
 	    (setq path-list nil))
 	(setq path-list (cdr path-list)))
       (or result
-	  ;; Try root.
-	  (elserv-call-service-function-maybe "/"
-					      (substring path 1)
-					      host request)
 	  (signal 'elserv-file-not-found path)))))
 
 (defun elserv-parse-accept-language (string)
@@ -969,15 +967,13 @@ REQUEST is the request structure (plist)."
 	  (setq path (elserv-url-decode-string path))
 	  (when (string-match "\\.\\." path)
 	    (signal 'elserv-forbidden (concat root path)))
-	  (if (or (and (string= ppath "/") (eq (length path) 0))
-		  (zerop (length (file-name-nondirectory filename))))
+	  (if (zerop (length (file-name-nondirectory filename)))
 	      (setq filename (expand-file-name
-			      elserv-directory-index-file
+ 			      elserv-directory-index-file
 			      filename)))
 	  (cond ((file-directory-p filename)
 		 (elserv-make-redirect
-		  (concat "http://" (plist-get request 'host)
-			  ppath path "/")))
+		  (concat "http://" (plist-get request 'host) ppath path "/")))
 		((setq realfile
 		       (elserv-find-file filename (plist-get 
 						   request

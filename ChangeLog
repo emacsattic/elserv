@@ -1,6 +1,17 @@
+2001-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elserv.el (elserv-parse-path): Changed behavior like XEmacs.
+	(elserv-service): Changed path analyse process.
+	path always starts with '/'.
+	(elserv-service-directory): Follow changes above.
+
+	* elserv-wiki.el (elserv-wiki): Likewise.
+
+	* elserv-mhc.el (elserv-mhc-function): Likewise.
+
 2001-07-12  OHASHI Akira  <bg66@koka-in.org>
 
-        * elserv.el (elserv-service-directory): Fix.
+	* elserv.el (elserv-service-directory): Fix.
 
 2001-07-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
