@@ -1,3 +1,11 @@
+2001-07-16  OHASHI Akira  <bg66@koka-in.org>
+
+        * elserv-autoindex.el (elserv-autoindex-ignore-list): Change list
+        contents to regexp.
+        (elserv-autoindex): Follow changes above.
+        (make-match-function): Abolish.
+        (elserv-autoindex-get-icon): Implement 'make-match-function'.
+
 2001-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* es-monitor.el: New file.

@@ -44,7 +44,8 @@
 <ADDRESS>%s Server at %s Port %s</ADDRESS>
 </BODY></HTML>\n")
 
-(defvar elserv-autoindex-ignore-list '("." ".htaccess" "CVS" "RCS"))
+(defvar elserv-autoindex-ignore-list '("^\\." "~$" "#$" "^HEADER" "^README"
+				              "RCS" "CVS" ",v$" ",t$"))
 
 (defvar elserv-autoindex-icon-alist
   '(("\\.css$"    . (:label "TXT" :icon "text.gif"))
@@ -93,7 +94,9 @@
     (setq path (substring path 0 (string-match "/$" path)))
     (setq files (directory-files directory))
     (dolist (list elserv-autoindex-ignore-list)
-      (setq files (delete list files)))
+      (setq files (delete-if (lambda (string)
+			       (save-match-data (string-match list string)))
+			     files)))
     (dolist (filename files)
       (let ((icon (elserv-autoindex-get-attr directory filename 'icon))
 	    (label (elserv-autoindex-get-attr directory filename 'label))
@@ -149,15 +152,13 @@
 	    (format "%4.0fk" (/ size 1024.0)))
 	   (t size))))))))
 
-(defmacro make-match-function (string)
-  `(lambda (regexp)
-     (save-match-data (string-match regexp ,string))))
-
 (defun elserv-autoindex-get-icon (filename &optional type)
   "Return icon's filename or lable for FILENAME."
   (let ((alist (or
 		(assoc-if
-		 (make-match-function (file-name-nondirectory filename))
+		 (lambda (regexp)
+		   (save-match-data
+		     (string-match regexp (file-name-nondirectory filename))))
 		 elserv-autoindex-icon-alist)
 		(if (file-directory-p filename)
 		    '("directory" .
