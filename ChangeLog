@@ -6,6 +6,10 @@
         (make-match-function): Abolish.
         (elserv-autoindex-get-icon): Implement 'make-match-function'.
 
+        * elserv-autoindex.el (elserv-autoindex): Simplify parent directory
+        handlings.
+        (elserv-autoindex-get-attr): Ditto.
+
 2001-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* es-monitor.el: New file.

@@ -91,25 +91,34 @@
 	  (setq port (match-string 2 host))
 	  (setq host (match-string 1 host)))
       (setq port "80"))
-    (setq path (substring path 0 (string-match "/$" path)))
-    (setq files (directory-files directory))
+    (unless (string= path "/")
+      (setq path (substring path 0 (string-match "/$" path)))
+      (setq string
+	    (format elserv-autoindex-list-format
+		    (concat elserv-icon-publish-path "/back.gif")
+		    "DIR" ".." "Parent Directory"
+		    (format "%25s"
+			    (elserv-autoindex-get-attr
+			     (expand-file-name ".." directory) 'lastmodified))
+		    (format "%7s" "-"))))
+    (setq files (directory-files directory nil "^\\([^.].*\\|\\.[^.].*\\)$"))
     (dolist (list elserv-autoindex-ignore-list)
       (setq files (delete-if (lambda (string)
 			       (save-match-data (string-match list string)))
 			     files)))
     (dolist (filename files)
-      (let ((icon (elserv-autoindex-get-attr directory filename 'icon))
-	    (label (elserv-autoindex-get-attr directory filename 'label))
-	    (name (elserv-autoindex-get-attr directory filename 'name))
-	    (lastmodified (elserv-autoindex-get-attr
-			   directory filename 'lastmodified))
-	    (size (elserv-autoindex-get-attr directory filename 'size)))
+      (let* ((realfile (expand-file-name filename directory))
+	     (icon (elserv-autoindex-get-attr realfile 'icon))
+	     (label (elserv-autoindex-get-attr realfile 'label))
+	     (lastmodified (elserv-autoindex-get-attr realfile 'lastmodified))
+	     (size (elserv-autoindex-get-attr realfile 'size)))
 	(setq string
 	      (concat string
 		      (format elserv-autoindex-list-format
-			      icon label filename name
-			      (format (concat "%" (number-to-string
-						   (- 41 (length name))) "s")
+			      icon label filename filename
+			      (format (concat "%"
+					      (number-to-string
+					       (- 41 (length filename))) "s")
 				      lastmodified)
 			      (format "%7s" size))))))
     (elserv-set-result-code result 'elserv-ok)
@@ -123,34 +132,27 @@
       (format elserv-autoindex-http-footer (elserv-version) host port)))
     result))
 
-(defun elserv-autoindex-get-attr (directory filename type)
-  "Return attribute of FILENAME."
-  (let ((realfile (expand-file-name filename directory)))
-    (cond
-     ((eq type 'icon)
-      (concat elserv-icon-publish-path "/"
-	      (if (string= filename "..")
-		  "back.gif"
-		(elserv-autoindex-get-icon realfile ':icon))))
-     ((eq type 'label)
-      (elserv-autoindex-get-icon realfile ':label))
-     ((eq type 'name)
-      (if (string= filename "..")
-	  "Parent Directory"
-	filename))
-     ((eq type 'lastmodified)
-      (let ((system-time-locale "C"))
-	(format-time-string "%d-%b-%Y %R" (nth 5 (file-attributes realfile)))))
-     ((eq type 'size)
-      (if (file-directory-p realfile)
-	  "-"
-	(let ((size (nth 7 (file-attributes realfile))))
-	  (cond
-	   ((<= 1 (/ size 1048576))
+(defun elserv-autoindex-get-attr (realfile type)
+  "Return attribute of REALFILE."
+  (cond
+   ((eq type 'icon)
+    (concat elserv-icon-publish-path "/"
+	    (elserv-autoindex-get-icon realfile ':icon)))
+   ((eq type 'label)
+    (elserv-autoindex-get-icon realfile ':label))
+   ((eq type 'lastmodified)
+    (let ((system-time-locale "C"))
+      (format-time-string "%d-%b-%Y %R" (nth 5 (file-attributes realfile)))))
+   ((eq type 'size)
+    (if (file-directory-p realfile)
+	"-"
+      (let ((size (nth 7 (file-attributes realfile))))
+	(cond
+	 ((<= 1 (/ size 1048576))
 	  (format "%3.1fM" (/ size 1048576.0)))
-	   ((<= 1 (/ size 1024))
-	    (format "%4.0fk" (/ size 1024.0)))
-	   (t size))))))))
+	 ((<= 1 (/ size 1024))
+	  (format "%4.0fk" (/ size 1024.0)))
+	 (t size)))))))
 
 (defun elserv-autoindex-get-icon (filename &optional type)
   "Return icon's filename or lable for FILENAME."
