@@ -1,5 +1,14 @@
 2001-07-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* xml-rpc.el (xml-rpc-xml-list-to-value): Bind local variable
+	`valtype' and `valvalue'.
+
+	* elserv-xmlrpc.el (elserv-xmlrpc-process-request): Bind local variable
+	`params'.
+
+	* ELSERV-ELS (elserv-modules-to-compile):
+	Added elserv-xmlrpc, es-xmlrpc, xml-rpc.
+
 	* elserv.el (toplevel): Added autoload setting for elserv-xmlrpc.
 	(elserv-default-server-name): New user option.
 	(elserv-search-default-make-index): Ditto.

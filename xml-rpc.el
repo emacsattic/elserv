@@ -184,36 +184,36 @@
 (defun xml-rpc-xml-list-to-value (xml-list)
   "Convert an XML-RPC structure in an xml.el style XML-LIST to an elisp list, \
 interpreting and simplifying it while retaining its structure."
-  (setq valtype (car (caddar xml-list))
-	valvalue (caddr (caddar xml-list)))
-  (cond
-   ;; Base64 not implemented yet
-   ((eq valtype 'base64)
-    (error "Base64 handling not implemented yet"))
-   ;; String
-   ((eq valtype 'string)
-    valvalue)
-   ;; Integer
-   ((or (eq valtype 'int) (eq valtype 'i4))
-    (string-to-int valvalue))
-   ;; dateTime
-   ((eq valtype 'dateTime.iso8601)
-    valvalue)
-   ;; Double/float
-   ((eq valtype 'double)
-    (string-to-number valvalue))
-   ;; Struct
-   ((eq valtype 'struct)
-    (mapcar (lambda (member)
-	      (let ((membername (cadr (cdaddr member)))
-		    (membervalue (xml-rpc-xml-list-to-value (cdddr member))))
-		(cons membername membervalue)))
-	    (cddr (caddar xml-list))))
-   ;; Array
-   ((eq valtype 'array)
-    (mapcar (lambda (arrval)
-	      (xml-rpc-xml-list-to-value (list arrval)))
-	    (cddr valvalue)))))
+  (let ((valtype (car (caddar xml-list)))
+	(valvalue (caddr (caddar xml-list))))
+    (cond
+     ;; Base64 not implemented yet
+     ((eq valtype 'base64)
+      (error "Base64 handling not implemented yet"))
+     ;; String
+     ((eq valtype 'string)
+      valvalue)
+     ;; Integer
+     ((or (eq valtype 'int) (eq valtype 'i4))
+      (string-to-int valvalue))
+     ;; dateTime
+     ((eq valtype 'dateTime.iso8601)
+      valvalue)
+     ;; Double/float
+     ((eq valtype 'double)
+      (string-to-number valvalue))
+     ;; Struct
+     ((eq valtype 'struct)
+      (mapcar (lambda (member)
+		(let ((membername (cadr (cdaddr member)))
+		      (membervalue (xml-rpc-xml-list-to-value (cdddr member))))
+		  (cons membername membervalue)))
+	      (cddr (caddar xml-list))))
+     ;; Array
+     ((eq valtype 'array)
+      (mapcar (lambda (arrval)
+		(xml-rpc-xml-list-to-value (list arrval)))
+	      (cddr valvalue))))))
 
 
 (defun xml-rpc-value-to-xml-list (value)

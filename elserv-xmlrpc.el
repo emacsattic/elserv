@@ -159,7 +159,7 @@ Optional ENCODING specifies the encoding of the response."
 	      (with-temp-buffer
 		(insert request)
 		(xml-parse-region (point-min) (point-max)))))
-	method)
+	method params)
     (setq method 
 	  (car (xml-node-children (assq 'methodName (xml-node-children xml)))))
     (setq params

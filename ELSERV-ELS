@@ -5,7 +5,8 @@
 ;;; Code:
 
 (defvar elserv-modules-to-compile
-  '(elserv elserv-autoindex es-demo es-monitor remote web-custom))
+  '(elserv elserv-autoindex es-demo es-monitor remote web-custom
+    elserv-xmlrpc es-xmlrpc xml-rpc))
 
 (defvar elserv-modules-not-to-compile nil)
 
