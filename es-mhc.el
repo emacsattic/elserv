@@ -109,6 +109,9 @@ Example:
   :type 'integer
   :group 'elserv-mhc)
 
+(defvar elserv-mhc/path nil)
+(defvar elserv-mhc/icon-image-alista nil)
+
 (defun elserv-mhc-publish-image (process ppath path file)
   (let ((file (expand-file-name file elserv-mhc-icon-path)))
     (when (file-exists-p file)
@@ -346,7 +349,7 @@ Example:
 	(insert "</tr>")))))
 
 (defun elserv-mhc-article-function (result path ppath request)
-  (let (raw-buffer mime-view-ignored-field-list)
+  (let (raw-buffer mime-view-ignored-field-list charset)
     (with-temp-buffer
       (insert-file-contents-as-binary
        (expand-file-name (concat "schedule" path) mhc-mail-path))
@@ -454,7 +457,6 @@ Example:
 	    (elserv-version)
 	    "</body></html>")))
 
-(defvar elserv-mhc/icon-image-alist nil)
 (defun elserv-mhc-icon-setup (process path)
   (setq elserv-mhc/icon-image-alist
 	(mapcar (lambda (x) (cons (downcase (car x))

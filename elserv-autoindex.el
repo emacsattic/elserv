@@ -24,6 +24,7 @@
 ;;; Code:
 
 (eval-when-compile (require 'cl))
+(require 'elserv)
 
 (defvar elserv-autoindex-http-header
   "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">
@@ -82,7 +83,7 @@
     ("\\.bin$"    . (:label "   " :icon "binary.gif"))
     ("\\.exe$"    . (:label "   " :icon "binary.gif"))))
 
-(defun elserv-autoindex (host path directory)
+(defun elserv-autoindex (result host path directory)
   "Handles the on-the-fly html index generation."
   (let (port files string)
     (if (or (string-match "^\\[\\([^]]+\\)\\]:?\\([0-9]*\\)" host)

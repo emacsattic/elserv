@@ -93,7 +93,11 @@
 		 (string :tag "Program Name"))
   :group 'elserv)
 
-(defcustom elserv-daemon-name "elservd"
+(defcustom elserv-daemon-name (if (fboundp 'locate-data-directory)
+				  (expand-file-name
+				   "elservd"
+				   (locate-data-directory "elserv"))
+				"elservd")
   "*Program name for Elserv daemon process."
   :type 'string
   :group 'elserv)
@@ -159,7 +163,12 @@ If this limit is ever reached, clients will be LOCKED OUT."
   :type 'integer
   :group 'elserv)
 
-(defcustom elserv-icon-path nil
+(defcustom elserv-icon-path (if (fboundp 'locate-data-directory)
+				(locate-data-directory "elserv")
+			      (let ((icons (expand-file-name "elserv/icons/"
+							     data-directory)))
+				(if (file-directory-p icons)
+				    icons)))
   "*Icon directory path."
   :type 'directory
   :group 'elserv)
@@ -1064,6 +1073,7 @@ REQUEST is the request structure (plist)."
 		      (string= elserv-directory-index-file
 			       (file-name-nondirectory filename)))
 		 (elserv-autoindex
+		  result
 		  (plist-get request 'host) (concat
 					     (unless (string= ppath "/") ppath)
 					     path)
@@ -1146,6 +1156,52 @@ NAME is the name of the package to publish."
 	   (file-directory-p elserv-icon-path))
       (elserv-publish process elserv-icon-publish-path
 		      :directory elserv-icon-path)))
+
+;;; Utils
+
+(defun elserv-replace-in-string (str regexp newtext &optional literal)
+  "Replace all matches in STR for REGEXP with NEWTEXT string.
+And returns the new string.
+Optional LITERAL non-nil means do a literal replacement.
+Otherwise treat \\ in NEWTEXT string as special:
+  \\& means substitute original matched text,
+  \\N means substitute match for \(...\) number N,
+  \\\\ means insert one \\."
+  (let ((rtn-str "")
+	(start 0)
+	(special)
+	match prev-start)
+    (while (setq match (string-match regexp str start))
+      (setq prev-start start
+	    start (match-end 0)
+	    rtn-str
+	    (concat
+	     rtn-str
+	     (substring str prev-start match)
+	     (cond (literal newtext)
+		   (t (mapconcat
+		       (function
+			(lambda (c)
+			  (if special
+			      (progn
+				(setq special nil)
+				(cond ((eq c ?\\) "\\")
+				      ((eq c ?&)
+				       (substring str (match-beginning 0)
+						  (match-end 0)))
+				      ((and (>= c ?0) (<= c ?9))
+				       (if (> c (+ ?0 (length
+						       (match-data))))
+					   ;; Invalid match num
+					   (error "Invalid match num: %c" c)
+					 (setq c (- c ?0))
+					 (substring str (match-beginning c)
+						    (match-end c))))
+				      (t (char-to-string c))))
+			    (if (eq c ?\\) (progn (setq special t) nil)
+			      (char-to-string c)))))
+		       newtext ""))))))
+    (concat rtn-str (substring str start))))
 
 (provide 'elserv)
 

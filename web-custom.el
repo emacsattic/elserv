@@ -33,6 +33,7 @@
 (require 'elserv)
 (require 'custom)
 (require 'cus-edit)
+(require 'mcharset)
 
 ;;; Code:
 (defvar web-custom-default-port 8080
@@ -74,7 +75,7 @@
 	       "<input type=\"text\" name=\""
 	       (concat (symbol-name ptype) ":"
 		       (symbol-name option)) "\" value=\""
-		       (elmo-replace-in-string
+		       (elserv-replace-in-string
 			(or (cond
 			     ((eq ptype 'integer)
 			      (and (symbol-value option)

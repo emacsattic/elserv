@@ -1,3 +1,22 @@
+2001-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* ELSERV-MK, ELSERV-ELS, ELSERV-CFG, Makefile: New files.
+
+	* web-custom.el (toplevel): Require mcharset.
+	(web-custom-option-body): Use elserv-replace-in-string.
+
+	* es-mhc.el (elserv-mhc/path, elserv-mhc/icon-image-alist): Moved
+	definition.
+	(elserv-mhc-article-function): Added local binding `charset'.
+
+	* elserv.el (elserv-daemon-name): Setup default for XEmacs package.
+	(elserv-icon-path): Set default value.
+	(elserv-service-directory): Set argument `result'.
+	(elserv-replace-in-string): New function.
+
+	* elserv-autoindex.el (toplevel): Require elserv.
+	(elserv-autoindex): Added argument `result'.
+
 2001-07-17  OHASHI Akira  <bg66@koka-in.org>
 
         * elserv-autoindex.el (elserv-autoindex): Fix regexp.
