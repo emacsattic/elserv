@@ -44,6 +44,15 @@
 ;; (elserv-publish (elserv-find-process 8080) "/"
 ;;                 :string "Hello World."
 ;;                 :content-type "text/plain")
+;;
+;; or write following lines in your .emacs.
+;;
+;; (autoload elserv-start "elserv" nil t)
+;; (add-hook 'elserv-start-hook
+;;           '(lambda ()
+;;              (elserv-publish (elserv-find-process) "/"
+;;                              :string "Hello World."
+;;                              :content-type "text/plain")))
 
 ;;; History:
 ;;
@@ -60,6 +69,8 @@
 (eval-when-compile
   (require 'cl)
   (require 'static))
+
+(autoload 'elserv-autoindex "elserv-autoindex" nil t)
 
 (product-provide 'elserv
   (product-define "Elserv" nil
@@ -110,7 +121,11 @@ If this limit is ever reached, clients will be LOCKED OUT.")
 
 (defvar elserv-access-log-max-size 50000
   "*Max size of access log file.")
-  
+
+(defvar elserv-options-indexes nil
+  "*If Non-nil and directory has no index file, generate html index in the
+directory.")
+
 (defconst elserv-url-unreserved-chars
   '(?a ?b ?c ?d ?e ?f ?g ?h ?i ?j ?k ?l ?m
        ?n ?o ?p ?q ?r ?s ?t ?u ?v ?w ?x ?y ?z
@@ -667,6 +682,7 @@ Return server process object."
     (get-buffer-create (concat "*Log of elserv*"
 			       (number-to-string
 				(elserv-process-port process))))
+    (run-hooks 'elserv-start-hook)
     process))
 
 (defun elserv-process-port (process)
@@ -992,6 +1008,12 @@ REQUEST is the request structure (plist)."
 					    realfile)
 					   (buffer-string)))
 		 result)
+		((and elserv-options-indexes
+		      (string= elserv-directory-index-file
+			     (file-name-nondirectory filename)))
+		 (elserv-autoindex
+		  (plist-get request 'host) (concat ppath path)
+		  (file-name-directory filename)))
 		(t (signal 'elserv-file-not-found (concat ppath path))))))))
 
 (defun elserv-service-string (auth predicate string content-type path ppath

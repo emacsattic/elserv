@@ -1,3 +1,51 @@
+2001-07-15  OHASHI Akira  <bg66@koka-in.org>
+
+        * elserv.el (toplevel): Autoload  `elserv-autoindex'.
+        (elserv-start): Run `elserv-start-hook'.
+        (elserv-options-indexes): New variable.
+        (elserv-service-directory): If `elserv-options-indexes' is Non-nil
+        and directory has no index file, generate html index in the directory.
+
+        * elserv-autoindex.el: New file.
+
+        * icons/a.gif: Ditto.
+
+        * icons/back.gif: Ditto.
+
+        * icons/binary.gif: Ditto.
+
+        * icons/blank.gif: Ditto.
+
+        * icons/bomb.gif: Ditto.
+
+        * icons/c.gif: Ditto.
+
+        * icons/compressed.gif: Ditto.
+
+        * icons/dvi.gif: Ditto.
+
+        * icons/folder.gif: Ditto.
+
+        * icons/image2.gif: Ditto.
+
+        * icons/layout.gif: Ditto.
+
+        * icons/movie.gif: Ditto.
+
+        * icons/p.gif: Ditto.
+
+        * icons/script.gif: Ditto.
+
+        * icons/sound2.gif: Ditto.
+
+        * icons/tar.gif: Ditto.
+
+        * icons/tex.gif: Ditto.
+
+        * icons/text.gif: Ditto.
+
+        * icons/unknown.gif: Ditto.
+
 2001-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* es-demo.el (elserv-demo-apropos-page): Eliminated.
