@@ -106,7 +106,7 @@
 				 "^\\([^.].+\\|\\.[^.].+\\|\\.\\..+\\)$"))
     (dolist (list elserv-autoindex-ignore-list)
       (dolist (file files)
-	(if (save-match-data (string-match list file))
+	(if (string-match list file)
 	    (setq files (delete file files)))))
     (dolist (filename files)
       (let* ((realfile (expand-file-name filename directory))
@@ -158,16 +158,15 @@
 
 (defun elserv-autoindex-get-icon (filename type)
   "Return icon's filename or lable for FILENAME."
-  (let ((alist (if (file-directory-p filename)
-		   '("directory" . (:label "DIR" :icon "folder.gif"))
-		 (or
-		  (assoc-if
-		   (lambda (regexp)
-		     (save-match-data
-		       (string-match regexp
-				     (file-name-nondirectory filename))))
-		   elserv-autoindex-icon-alist)
-		  '("unknown" . (:label "   " :icon "unknown.gif"))))))
+  (let ((alist (or
+		(if (file-directory-p filename)
+		    '("directory" . (:label "DIR" :icon "folder.gif"))
+		  (let ((file (file-name-nondirectory filename)))
+		    (catch 'found
+		      (dolist (list elserv-autoindex-icon-alist)
+			(if (string-match (car list) file)
+			    (throw 'found list))))))
+		'("unknown" . (:label "   " :icon "unknown.gif")))))
     (plist-get (cdr alist) type)))
 
 (provide 'elserv-autoindex)

@@ -1,3 +1,8 @@
+2001-07-17  OHASHI Akira  <bg66@koka-in.org>
+
+        * elserv-autoindex.el (elserv-autoindex): Simplify.
+        (elserv-autoindex-get-icon): Don't use `assoc-if'.
+
 2001-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elserv.el (toplevel): Enclose autoloading elserv-autoindex
