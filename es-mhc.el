@@ -28,31 +28,38 @@
 (require 'mhc)
 (require 'mhc-face)
 (require 'mime-view)
+(require 'custom)
 ;;; Code:
 (eval-when-compile (require 'cl))
 
 (defgroup elserv-mhc nil
   "Elserv interface for MHC."
+  :group 'elserv
   :group 'mail)
 
 (defcustom elserv-mhc-default-port 10000
   "*Default port for MHC."
+  :type 'integer
+  :group 'elserv-mhc)
+
+(defcustom elserv-mhc-icon-publish-path elserv-icon-publish-path
+  "*Path to publish an icon directory specified by `elserv-mhc-icon-path'."
   :type 'string
   :group 'elserv-mhc)
 
-(defcustom elserv-mhc-icon-path nil
+(defcustom elserv-mhc-icon-path elserv-icon-path
   "*Icon image file path."
-  :type 'string
+  :type 'directory
   :group 'elserv-mhc)
 
 (defcustom elserv-mhc-background-image "background.png"
   "*Background image file."
-  :type 'file
+  :type 'string
   :group 'elserv-mhc)
 
 (defcustom elserv-mhc-article-icon-image "article.png"
   "*Article icon image file."
-  :type 'file
+  :type 'string
   :group 'elserv-mhc)
 
 (defcustom elserv-mhc-icon-image-alist
@@ -102,11 +109,6 @@ Example:
   :type 'integer
   :group 'elserv-mhc)
 
-;; Internal variables.
-(defvar elserv-mhc/icon-image-list nil)
-
-(defvar elserv-mhc/path nil)
-
 (defun elserv-mhc-publish-image (process ppath path file)
   (let ((file (expand-file-name file elserv-mhc-icon-path)))
     (when (file-exists-p file)
@@ -121,31 +123,12 @@ Example:
 			(buffer-string)))
       t)))
 
-(defun elserv-mhc/icon-setup (process path)
-  (let ((alist elserv-mhc-icon-image-alist)
-	file)
-    (setq elserv-mhc/icon-image-list nil)
-    (while alist
-      (if (elserv-mhc-publish-image
-	   process path
-	   (concat "icon/" (downcase (car (car alist))))
-	   (cdr (car alist)))
-	  (setq elserv-mhc/icon-image-list
-		(cons (downcase (car (car alist)))
-		      elserv-mhc/icon-image-list)))
-      (setq alist (cdr alist)))))
-
-(defun elserv-mhc-icon-setup (process path)
-  "Initialize MHC icons."
-  (interactive)
-  (message "Initializing MHC icons for Elserv...")
-  (elserv-mhc/icon-setup process path)
-  (message "Initializing MHC icons for Elserv...done."))
-
-(defun elserv-mhc-icon-string (name alt)
-  (if (member name elserv-mhc/icon-image-list)
+(defun elserv-mhc-icon-string (icon alt)
+  (if (setq icon (assoc (downcase icon) elserv-mhc/icon-image-alist))
       (concat "<img src=\""
-	      (expand-file-name (concat "icon/" (downcase name))
+	      (expand-file-name (concat 
+				 elserv-mhc-icon-publish-path "/"
+				 (cdr icon))
 				elserv-mhc/path)
 	      "\" alt=\"" alt "\">")
     alt))
@@ -187,8 +170,8 @@ Example:
 					     (mhc-schedule-categories
 					      schedule)))))
 	    (when (and category
-		       (member (downcase category)
-			       elserv-mhc/icon-image-list))
+		       (assoc (downcase category)
+			      elserv-mhc/icon-image-alist))
 	      (insert (elserv-mhc-icon-string category "○"))))
 	  (insert
 	   (elserv-mhc-string-with-face
@@ -470,6 +453,13 @@ Example:
     (insert "</table><hr>Powered by "
 	    (elserv-version)
 	    "</body></html>")))
+
+(defvar elserv-mhc/icon-image-alist nil)
+(defun elserv-mhc-icon-setup (process path)
+  (setq elserv-mhc/icon-image-alist
+	(mapcar (lambda (x) (cons (downcase (car x))
+				  (cdr x)))
+		elserv-mhc-icon-image-alist)))
 
 (defun elserv-mhc-publish (process path)
   "Publish MHC service.

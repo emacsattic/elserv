@@ -1,5 +1,15 @@
 2001-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* es-mhc.el (elserv-mhc-icon-publish-path): New user option.
+	(elserv-mhc-icon-path): Changed default value as elserv-icon-path.
+	(elserv-mhc/icon-setup): Eliminated.
+	(elserv-mhc-icon-string): Changed to use elserv-mhc-icon-publish-path.
+	(elserv-mhc-make-todo-list): Use elserv-mhc/icon-image-alist.
+	(elserv-mhc/icon-image-alist): New internal variable.
+	(elserv-mhc-icon-setup): Rewritten.
+
+	* elserv.el: Defcustomized.
+
 	* elserv-autoindex.el (elserv-autoindex-http-header): Don't hard code
 	icon path.
 	(elserv-autoindex-get-icon): Ditto.

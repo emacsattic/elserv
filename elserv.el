@@ -77,60 +77,97 @@
 		  '(0 3 1)
 		  "Miss Me Blind"))
 
-(defvar elserv-default-port 8000
-  "*Default port number for Elserv.")
+(defgroup elserv nil
+  "Elserv -- Yet another HTTP server on Emacsen."
+  :group 'hypermedia)
 
-(defvar elserv-program-name nil
+(defcustom elserv-default-port 8000
+  "*Default port number for Elserv."
+  :type 'integer
+  :group 'elserv)
+
+(defcustom elserv-program-name nil
   "*If non-nil, it is invoked as a command.
-`elserv-daemon-name' is passed as first argument.")
+`elserv-daemon-name' is passed as first argument."
+  :type '(choice (symbol :tag "Direct" nil)
+		 (string :tag "Program Name"))
+  :group 'elserv)
 
-(defvar elserv-daemon-name "elservd"
-  "*Program name for Elserv daemon process.")
+(defcustom elserv-daemon-name "elservd"
+  "*Program name for Elserv daemon process."
+  :type 'string
+  :group 'elserv)
 
-(defvar elserv-publish-hash-length 31
-  "*Length of publish hash.")
+(defcustom elserv-publish-hash-length 31
+  "*Length of publish hash."
+  :type 'integer
+  :group 'elserv)
 
-(defvar elserv-debug t
-  "*If non-nil, request string is inserted to the debug buffer.")
+(defcustom elserv-debug nil
+  "*If non-nil, request string is inserted to the debug buffer."
+  :type 'boolean
+  :group 'elserv)
 
-(defvar elserv-directory-index-file "index.html"
-  "*Index file for the directory.")
+(defcustom elserv-directory-index-file "index.html"
+  "*Index file name for the directory."
+  :type 'string
+  :group 'elserv)
 
-(defvar elserv-directory-autoindex t
+(defcustom elserv-directory-autoindex t
   "*If Non-nil and directory has no index file, generate html index in the
-directory.")
+directory."
+  :type 'boolean
+  :group 'elserv)
 
-(defvar elserv-keep-alive t
+(defcustom elserv-keep-alive t
   "*Non-nil enable persistent connections.
-\(more than one request per connection\).")
+\(more than one request per connection\)."
+  :type 'boolean
+  :group 'elserv)
 
-(defvar elserv-max-keep-alive-requests 100
+(defcustom elserv-max-keep-alive-requests 100
   "*The maximum number of requests to allow during a persistent connection.
 Set to nil to allow an unlimited amount.
-We recommend you leave this number high, for maximum performance.")
+We recommend you leave this number high, for maximum performance."
+  :type 'integer
+  :group 'elserv)
 
-(defvar elserv-keep-alive-timeout 15
-  "*Number of seconds to wait for the next request on the same connection.")
+(defcustom elserv-keep-alive-timeout 15
+  "*Number of seconds to wait for the next request on the same connection."
+  :type 'integer
+  :group 'elserv)
 
-(defvar elserv-identity-check nil
+(defcustom elserv-identity-check nil
   "*Non-nil enables RFC1413-compliant logging.
-\(logging of the remote user name for each connection\)")
+\(logging of the remote user name for each connection\)"
+  :type 'boolean
+  :group 'elserv)
 
-(defvar elserv-max-clients 20
+(defcustom elserv-max-clients 20
   "*Non-nil limits the number of clients who can simultaneously connect.
-If this limit is ever reached, clients will be LOCKED OUT.")
+If this limit is ever reached, clients will be LOCKED OUT."
+  :type 'integer
+  :group 'elserv)
 
-(defvar elserv-access-log-file nil
-  "*If file name is specified, access log is saved to the file.")
+(defcustom elserv-access-log-file nil
+  "*If file name is specified, access log is saved to the file."
+  :type 'file
+  :group 'elserv)
 
-(defvar elserv-access-log-max-size 50000
-  "*Max size of access log file.")
+(defcustom elserv-access-log-max-size 50000
+  "*Max size of access log file."
+  :type 'integer
+  :group 'elserv)
 
-(defvar elserv-icon-path nil
-  "*Icon directory path.")
+(defcustom elserv-icon-path nil
+  "*Icon directory path."
+  :type 'directory
+  :group 'elserv)
 
-(defvar elserv-icon-publish-path "/icons"
-  "*Path to publish an icon directory specified by `elserv-icon-path'.")
+(defcustom elserv-icon-publish-path "/icons"
+  "*Path to publish an icon directory specified by `elserv-icon-path'."
+  :type 'string
+  :group 'elserv)
 
 (defconst elserv-url-unreserved-chars
   '(?a ?b ?c ?d ?e ?f ?g ?h ?i ?j ?k ?l ?m
