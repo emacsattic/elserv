@@ -1,5 +1,24 @@
 2001-07-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elserv.el (toplevel): Added autoload setting for elserv-xmlrpc.
+	(elserv-default-server-name): New user option.
+	(elserv-search-default-make-index): Ditto.
+	(elserv-server-admin-full-name): Ditto.
+	(elserv-server-admin-mail-address): Ditto.
+	(elserv-buffer-search-index-buffer): New buffer local variable.
+	(elserv-start): Setup elserv-buffer-search-index-buffer.
+	(elserv-stop): Clean up elserv-buffer-search-index-buffer.
+	(elserv-publish): Make search index if elserv-search-default-make-index
+	is non-nil or (:index t) argument is specified.
+	(elserv-search-index-buffer-name): New constant.
+	(elserv-search-initialize): New function.
+	(elserv-search-buffer): Ditto.
+	(elserv-search-list-files-internal): Ditto.
+	(elserv-search-list-files): Ditto.
+	(elserv-search-add-index): Ditto.
+	(elserv-search-add-directory-index): Ditto.
+	(elserv-search): Ditto.
+
 	* elserv-xmlrpc.el, es-xmlrpc.el, xml-rpc.el: New files.
 
 2001-07-19  Yuuichi Teranishi  <teranisi@gohome.org>

@@ -71,7 +71,8 @@
   (require 'static))
 
 (eval-and-compile
-  (autoload 'elserv-autoindex "elserv-autoindex" nil t))
+  (autoload 'elserv-autoindex "elserv-autoindex")
+  (autoload 'elserv-xmlrpc-register "elserv-xmlrpc"))
 
 (product-provide 'elserv
   (product-define "Elserv" nil
@@ -81,6 +82,11 @@
 (defgroup elserv nil
   "Elserv -- Yet another HTTP server on Emacsen."
   :group 'hypermedia)
+
+(defcustom elserv-default-server-name (system-name)
+  "*Default server name for Elserv."
+  :type 'string
+  :group 'elserv)
 
 (defcustom elserv-default-port 8000
   "*Default port number for Elserv."
@@ -119,8 +125,13 @@
   :group 'elserv)
 
 (defcustom elserv-directory-autoindex t
-  "*If Non-nil and directory has no index file, generate html index in the
+  "*If non-nil and directory has no index file, generate html index in the
 directory."
+  :type 'boolean
+  :group 'elserv)
+
+(defcustom elserv-search-default-make-index t
+  "*If non-nil, search index is created in `elserv-publish'."
   :type 'boolean
   :group 'elserv)
 
@@ -179,6 +190,16 @@ If this limit is ever reached, clients will be LOCKED OUT."
   :type 'string
   :group 'elserv)
 
+(defcustom elserv-server-admin-full-name (user-full-name)
+  "*Full name of the server admin."
+  :type 'string
+  :group 'elserv)
+
+(defcustom elserv-server-admin-mail-address user-mail-address
+  "*E-mail address of the server admin."
+  :type 'string
+  :group 'elserv)
+
 (defconst elserv-url-unreserved-chars
   '(?a ?b ?c ?d ?e ?f ?g ?h ?i ?j ?k ?l ?m
        ?n ?o ?p ?q ?r ?s ?t ?u ?v ?w ?x ?y ?z
@@ -205,6 +226,8 @@ If this limit is ever reached, clients will be LOCKED OUT."
 (make-variable-buffer-local 'elserv-buffer-client-process)
 (defvar elserv-buffer-client-port nil)
 (make-variable-buffer-local 'elserv-buffer-client-port)
+(defvar elserv-buffer-search-index-buffer nil)
+(make-variable-buffer-local 'elserv-buffer-search-index-buffer)
 
 (defvar elserv-mime-types-alist
   '(("html" . "text/html")
@@ -728,6 +751,7 @@ Return server process object."
     (with-current-buffer (process-buffer process)
       (set-buffer-multibyte nil)
       (erase-buffer)
+      (setq elserv-buffer-search-index-buffer (elserv-search-initialize))
       (setq elserv-buffer-request-handler 'elserv-request-handler)
       (setq elserv-buffer-publish-hash
 	    (make-vector elserv-publish-hash-length 0))
@@ -766,6 +790,9 @@ Otherwise, an Elserv process last invoked is killed."
   (let ((process (elserv-find-process port)))
     (if process
 	(progn
+	  (with-current-buffer (process-buffer process)
+	    (if (buffer-live-p elserv-buffer-search-index-buffer)
+		(kill-buffer elserv-buffer-search-index-buffer)))
 	  (kill-buffer (process-buffer process))
 	  (delete-process process)
 	  (message "Elserv stopped."))
@@ -931,15 +958,27 @@ Rest of arguments ARGS are plist of the form (:ATTR1 VAL1 :ATTR2 VAL2 ...)."
       (setq doc (plist-get args :description))
       (cond
        ((setq data (plist-get args :directory)) ; directory is set.
+	(if (or elserv-search-default-make-index
+		(plist-get args :index))
+	    (elserv-search-add-directory-index elserv-buffer-search-index-buffer
+					       path data))
 	(set (intern path elserv-buffer-publish-hash)
 	     (list 'elserv-service-directory
 		   doc auth predicate data)))
        ((setq data (plist-get args :string))    ; string is set.
+	(if (or elserv-search-default-make-index
+		(plist-get args :index))
+	    (elserv-search-add-index elserv-buffer-search-index-buffer
+				     path "" doc))
 	(set (intern path elserv-buffer-publish-hash)
 	     (list 'elserv-service-string
 		   doc auth predicate data
 		   (plist-get args :content-type))))
        ((setq data (plist-get args :function))   ; handler is set.
+	(if (or elserv-search-default-make-index
+		(plist-get args :index))
+	    (elserv-search-add-index elserv-buffer-search-index-buffer
+				     path "" doc))
 	(set (intern path elserv-buffer-publish-hash)
 	     (nconc (list 'elserv-service-function
 			  doc auth predicate data
@@ -1157,6 +1196,64 @@ NAME is the name of the package to publish."
 	   (file-directory-p elserv-icon-path))
       (elserv-publish process elserv-icon-publish-path
 		      :directory elserv-icon-path)))
+
+;;; Search
+(defconst elserv-search-index-buffer-name " *elserv search*"
+  "Buffer name for elserv search index.")
+
+(defun elserv-search-initialize ()
+  (generate-new-buffer elserv-search-index-buffer-name))
+
+(defun elserv-search-buffer (buffer regexp)
+  (let (bol result)
+    (with-current-buffer buffer
+      (goto-char (point-min))
+      (while (re-search-forward regexp nil t)
+	(beginning-of-line)
+	(setq bol (point))
+	(when (search-forward ":" nil t)
+	  (setq result (cons (buffer-substring bol (- (point) 1))
+			     result)))
+	(end-of-line)))
+    result))
+
+(defun elserv-search-list-files-internal (dir &optional relative)
+  (let (files)
+    (dolist (file (delete ".." (delete "." (directory-files dir))))
+      (if (file-directory-p (expand-file-name file dir))
+	  (setq files (nconc (mapcar
+			      (lambda (f)
+				(concat relative
+					(if relative "/")
+					f))
+			      (elserv-search-list-files-internal
+ 			       (expand-file-name file dir)
+			       file))
+			     files))
+	(setq files (cons (concat relative
+				  (if relative "/")
+				  file) files))))
+    files))
+
+(defun elserv-search-list-files (dir)
+  (elserv-search-list-files-internal dir))
+
+(defun elserv-search-add-index (buffer ppath path index)
+  (when (buffer-live-p buffer)
+    (with-current-buffer buffer
+      (goto-char (point-max))
+      (insert ppath (if (or (string= ppath "/") (string= path ""))
+			"" "/")
+	      path ":" (or index "") "\n"))))
+
+(defun elserv-search-add-directory-index (buffer ppath dir)
+  (dolist (file (elserv-search-list-files dir))
+    (elserv-search-add-index buffer ppath file nil)))
+
+(defun elserv-search (regexp)
+  "Search content which matches REGEXP."
+  ;; current buffer is process buffer.
+  (elserv-search-buffer elserv-buffer-search-index-buffer regexp))
 
 ;;; Utils
 
