@@ -965,7 +965,7 @@ REQUEST is the request structure (plist)."
     (or (elserv-check-predicate request predicate)
 	(elserv-authenticate request auth result)
 	(let (filename realfile attr mime-type)
-	  (setq filename (concat root (unless (eq (length path) 0) "/") path))
+	  (setq filename (concat root path))
 	  (setq path (elserv-url-decode-string path))
 	  (when (string-match "\\.\\." path)
 	    (signal 'elserv-forbidden (concat root path)))
@@ -977,7 +977,7 @@ REQUEST is the request structure (plist)."
 	  (cond ((file-directory-p filename)
 		 (elserv-make-redirect
 		  (concat "http://" (plist-get request 'host)
-			  ppath (unless (eq (length path) 0) "/") path "/")))
+			  ppath path "/")))
 		((setq realfile
 		       (elserv-find-file filename (plist-get 
 						   request
@@ -997,7 +997,7 @@ REQUEST is the request structure (plist)."
 					    realfile)
 					   (buffer-string)))
 		 result)
-		(t (signal 'elserv-file-not-found path)))))))
+		(t (signal 'elserv-file-not-found (concat ppath path))))))))
 
 (defun elserv-service-string (auth predicate string content-type path ppath
 				   request)

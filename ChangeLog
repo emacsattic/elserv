@@ -1,3 +1,7 @@
+2001-07-12  OHASHI Akira  <bg66@koka-in.org>
+
+        * elserv.el (elserv-service-directory): Fix.
+
 2001-07-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* remote.el (remote-controller): Use function system-name instead
