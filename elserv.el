@@ -72,7 +72,9 @@
 
 (eval-and-compile
   (autoload 'elserv-autoindex "elserv-autoindex")
-  (autoload 'elserv-xmlrpc-register "elserv-xmlrpc"))
+  (autoload 'elserv-xmlrpc-register "elserv-xmlrpc")
+  (autoload 'elserv-negotiation "elserv-negotiation")
+  (autoload 'elserv-negotiation-make-result "elserv-negotiation"))
 
 (product-provide 'elserv
   (product-define "Elserv" nil
@@ -134,6 +136,11 @@ directory."
   "*If non-nil, search index is created in `elserv-publish'."
   :type 'boolean
   :group 'elserv)
+
+(defcustom elserv-use-negotiation t
+  "*If non-nil, use content negotiation."
+  :type 'boolean
+  :group 'eliserv)
 
 (defcustom elserv-keep-alive t
   "*Non-nil enable persistent connections.
@@ -1043,30 +1050,6 @@ REQUEST is the request structure."
       (or result
 	  (signal 'elserv-file-not-found path)))))
 
-(defun elserv-parse-accept-language (string)
-  "Parse Accept-Language field body and return language candidate list."
-  (let (candidates)
-    (while (string-match "^\\([A-Za-z-]+\\)\\(\\(; *q=[0-9.]+\\)?, *\\)?"
-			 string)
-      (setq candidates (cons 
-			(substring string (match-beginning 1)(match-end 1))
-			candidates))
-      (setq string (substring string (match-end 0))))
-    (nreverse candidates)))
-
-(defun elserv-find-file (filename language)
-  "Return a filename which matches to FILENAME and LANGUAGE exists."
-  (if language
-      (let ((langs (elserv-parse-accept-language language))
-	    file)
-	(catch 'done
-	  (dolist (lang langs)
-	    (if (file-readable-p (setq file (concat filename "." lang)))
-		(throw 'done file)))
-	  (if (file-readable-p filename)
-	      filename)))
-    filename))
-
 (defun elserv-service-directory (doc auth predicate root path ppath request)
   "Service a directory.
 DOC is the documentation of the service.
@@ -1095,32 +1078,38 @@ REQUEST is the request structure (plist)."
 			  (unless (string= ppath "/") ppath)
 			  path "/")))
 		((setq realfile
-		       (elserv-find-file filename (plist-get 
-						   request
-						   'accept-language)))
-		 (setq mime-type (elserv-mime-type filename))
-		 (setq attr (file-attributes realfile))
-		 ;; Trace symbolic link.
-		 (when (stringp (car attr))
-		   (setq realfile (expand-file-name (car attr) root))
-		   (setq attr (file-attributes realfile)))
-		 (elserv-set-result-code result 'elserv-ok)
-		 (elserv-set-result-header result
-					   `(content-type ,mime-type))
-		 (elserv-set-result-body result
-					 (with-temp-buffer
-					   (insert-file-contents-as-binary
-					    realfile)
-					   (buffer-string)))
-		 result)
+		       (elserv-negotiation
+			filename (plist-get request 'accept-language)))
+		 (if (and elserv-use-negotiation
+			  (listp realfile))
+		     (elserv-negotiation-make-result
+		      result
+		      (plist-get request 'host)
+		      (concat (unless (string= ppath "/") ppath) path)
+		      realfile)
+		   (setq mime-type (elserv-mime-type filename))
+		   (setq attr (file-attributes realfile))
+		   ;; Trace symbolic link.
+		   (when (stringp (car attr))
+		     (setq realfile (expand-file-name (car attr) root))
+		     (setq attr (file-attributes realfile)))
+		   (elserv-set-result-code result 'elserv-ok)
+		   (elserv-set-result-header result
+					     `(content-type ,mime-type))
+		   (elserv-set-result-body result
+					   (with-temp-buffer
+					     (insert-file-contents-as-binary
+					      realfile)
+					     (buffer-string)))
+		   result))
 		((and elserv-directory-autoindex
+		      (file-directory-p (file-name-directory filename))
 		      (string= elserv-directory-index-file
 			       (file-name-nondirectory filename)))
 		 (elserv-autoindex
 		  result
-		  (plist-get request 'host) (concat
-					     (unless (string= ppath "/") ppath)
-					     path)
+		  (plist-get request 'host)
+		  (concat (unless (string= ppath "/") ppath) path)
 		  (file-name-directory filename)))
 		(t (signal 'elserv-file-not-found
 			   (concat (unless (string= ppath "/") ppath)
