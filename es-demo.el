@@ -117,9 +117,11 @@
   (elserv-set-result-body
    result
    (save-window-excursion
-     (apropos (nth 1 (split-string (plist-get request 'body) "=")))
-     (with-current-buffer (get-buffer "*Apropos*")
-       (buffer-string)))))
+     (if (apropos (nth 1 (split-string (plist-get request 'body) "=")))
+	 (with-current-buffer (get-buffer "*Apropos*")
+	   (buffer-string))
+       (concat "No apropos matching for `"
+	       (nth 1 (split-string (plist-get request 'body) "=")) "'")))))
 
 ;; A counter
 (defvar elserv-counter-file-base "/tmp/elserv-counter")

@@ -1,3 +1,8 @@
+2001-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* es-demo.el (elserv-demo-post-apropos): Fixed problem when no
+	apropos matched.
+
 2001-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elservd: Removed.
