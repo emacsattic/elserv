@@ -1,3 +1,7 @@
+2002-03-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elserv.el (elserv-request-handler): Fix.
+
 2001-12-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* es-demo.el (elserv-demo-publish): Don't publish

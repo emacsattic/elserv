@@ -867,9 +867,9 @@ RESULT is the result structure."
 				     (downcase method))))
 	  (if (fboundp func)
 	      (funcall func process (match-string 2 req) request)
-	    (signal 'elserv-not-implemented (concat 
-					     method
-					     " is not implemented"))))
+	    (signal 'elserv-unimplemented (concat 
+					   method
+					   " is not implemented"))))
       (signal 'elserv-bad-request req))))
 
 (defun elserv-handle-get (process path request)
