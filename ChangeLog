@@ -1,5 +1,16 @@
 2001-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* es-demo.el (elserv-demo-apropos-page): Eliminated.
+	(elserv-demo-describe-function): Renamed from elserv-demo-function.
+	(elserv-demo-publish): New function.
+	(elserv-demo-start): Use it.
+
+	* es-wiki.el (elsesrv-wiki-compilation-finish-function): New variable
+	(To follow changes in latest emacs-wiki).
+	(elserv-wiki-search-page): Use it.
+	* elservd (toplevel): Call STDOUT.binmode for DOS environment.
+	(Patches provided on gotoh-san's diary.)
+
 	* elserv.el (elserv-package-publish): New function.
 
 	* es-wiki.el (elserv-wiki-publish): New function.

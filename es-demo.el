@@ -112,16 +112,6 @@
 	"</ul>\n")))))
 
 ;; POST (apropos)
-(defvar elserv-demo-apropos-page
-  "<html><head><title>describe-function</title></head>
-<body bgcolor=\"white\">
-<H1>Emacs のキーワードをしらべる (apropos)</H1>
-<form action=\"/apropos\" method=\"POST\">
-<input type=\"text\" name=\"value\"><br>
-<input type=\"submit\" value=\"しらべる\">
-<input type=\"reset\" value=\"クリア\">
-</form></html>")
-
 (defun elserv-demo-post-apropos (result path ppath request)
   (elserv-set-result-header result '(content-type "text/plain"))
   (elserv-set-result-body
@@ -196,7 +186,7 @@
     'iso-2022-jp)))
 
 ;; describe-function
-(defun elserv-demo-function (result path ppath request)
+(defun elserv-demo-describe-function (result path ppath request)
   (elserv-set-result-header result
 			    '(content-type "text/plain"))
   (elserv-set-result-body
@@ -205,90 +195,98 @@
 	     (prog1 (describe-function (intern-soft (substring path 1)))
 	       (message ""))))))
 
-(defun elserv-demo-start ()
-  "Start a sample demo server of Elserv."
-  (interactive)
-  (elserv-start)
-  (elserv-publish (elserv-find-process)
-		  "/"
+(defun elserv-demo-publish (process path)
+  "Publish DEMO service.
+PROCESS is the elserv server process.
+PATH is the path to publish DEMO content."
+  (elserv-publish process
+		  path
 		  :string
 		  (encode-coding-string
-		   (concat 
+		   (concat
 		    "<html><head><title>Elserv</title></head>\
-<body bgcolor=\"white\"> <img src=\"logo.gif\"><h1> Elserv: Yet another HTTP server on Emacsen </h1>\
+<body bgcolor=\"white\"> <img src=\"" path "/logo.gif\"><h1> Elserv: Yet another HTTP server on Emacsen </h1>\
 もしこのページが読めたのであれば、Elserv ウェブサーバのインストールがこの計算機で無事に終了したことを意味します。あなたは、関数 <a href=\"/function/elserv-publish\">elserv-publish</a> によって文書を
 加えたり、このページを置きかえることができます。
-<h2>デモ</h2><a href=\"/calendar\">カレンダー</a> ... calendar を表示します。<br>
-<a href=\"/buffers\">バッファ一覧</a> ... 現在 Emacs 上にあるバッファの一覧を表示します。<br>
-<a href=\"/buffers-local\">バッファ一覧</a> ... 同上(ただし localhost 以外は拒否。)<br>
-<a href=\"/auth.txt\">認証テスト</a> ... 認証のテスト<br>
-<a href=\"/apropos.html\">キーワードをしらべる</a> ... POST を使う例です。<br>
-<a href=\"/upload.html\">ファイルをアップロードする</a> ... POST を使う例、その 2。<br>
-<a href=\"/counter\">カウンタ</a> ... いわゆるカウンタ。<br>
-<a href=\"/a\">あんてな(要 w3m)</a> ... <a href=\"http://namazu.org/~tsuchiya/emacs-w3m\">emacs-w3m </a> のアンテナ機能を中継します。<br>
-<a href=\"/h\">ヒストリ(要 w3m)</a> ... 同じく emacs-w3m のDBヒストリを中継します。<br>
-<a href=\"/w\">天気予報(要 w3m)</a> ... 同じく emacs-w3m の天気予報を中継します。<br>
+<h2>デモ</h2><a href=\"" path "/calendar\">カレンダー</a> ... calendar を表示します。<br>
+<a href=\"" path "/buffers\">バッファ一覧</a> ... 現在 Emacs 上にあるバッファの一覧を表示します。<br>
+<a href=\"" path "/buffers-local\">バッファ一覧</a> ... 同上(ただし localhost 以外は拒否。)<br>
+<a href=\""path "/auth.txt\">認証テスト</a> ... 認証のテスト<br>
+<a href=\"" path "/apropos.html\">キーワードをしらべる</a> ... POST を使う例です。<br>
+<a href=\"" path "/upload.html\">ファイルをアップロードする</a> ... POST を使う例、その 2。<br>
+<a href=\"" path "/counter\">カウンタ</a> ... いわゆるカウンタ。<br>
+<a href=\"a\">あんてな(要 w3m)</a> ... <a href=\"http://namazu.org/~tsuchiya/emacs-w3m\">emacs-w3m </a> のアンテナ機能を中継します。<br>
+<a href=\"" path "/h\">ヒストリ(要 w3m)</a> ... 同じく emacs-w3m のDBヒストリを中継します。<br>
+<a href=\"" path "/w\">天気予報(要 w3m)</a> ... 同じく emacs-w3m の天気予報を中継します。<br>
 <hr> Powered by <a href=\"http://www.gohome.org/elserv\">" (elserv-version) "</a>
 </body></html>")
 		   'iso-2022-jp)
 		  :content-type "text/html; charset=ISO-2022-JP")
   (elserv-publish (elserv-find-process)
-		  "/calendar"
+		  (concat path "/calendar")
 		  :function 'elserv-demo-calendar)
   (elserv-publish (elserv-find-process)
-		  "/buffers"
+		  (concat path "/buffers")
 		  :function 'elserv-demo-buffers)
   (elserv-publish (elserv-find-process)
-		  "/buffers-local"
+		  (concat path "/buffers-local")
 		  :function 'elserv-demo-buffers
 		  :allow '("localhost"))
   (elserv-publish (elserv-find-process)
-		  "/auth.txt"
+		  (concat path "/auth.txt")
 		  :string "Hello World."
 		  :content-type "text/plain"
 		  :authenticate '(:realm "HelloWorld"
 					 :users (("foo" . "bar")
 						 ("hoge" . "fuga"))))
   (elserv-publish (elserv-find-process)
-		  "/apropos.html"
+		  (concat path "/apropos.html")
 		  :string
 		  (encode-coding-string
-		   elserv-demo-apropos-page 'iso-2022-jp)
+		   (concat
+		    "<html><head><title>describe-function</title></head>
+<body bgcolor=\"white\">
+<H1>Emacs のキーワードをしらべる (apropos)</H1>
+<form action=\"" path "/apropos\" method=\"POST\">
+<input type=\"text\" name=\"value\"><br>
+<input type=\"submit\" value=\"しらべる\">
+<input type=\"reset\" value=\"クリア\">
+</form></html>") 'iso-2022-jp)
 		  :content-type "text/html; charset=ISO-2022-JP")
   (elserv-publish (elserv-find-process)
-		  "/function"
-		  :function 'elserv-demo-function)
+		  (concat path "/function")
+		  :function 'elserv-demo-describe-function)
   (elserv-publish (elserv-find-process)
-		  "/apropos"
+		  (concat path "/apropos")
 		  :function 'elserv-demo-post-apropos)
   (elserv-publish (elserv-find-process)
-		  "/a"
+		  (concat path "/a")
 		  :function 'elserv-demo-antenna)
   (elserv-publish (elserv-find-process)
-		  "/h"
+		  (concat path "/h")
 		  :function 'elserv-demo-history)
   (elserv-publish (elserv-find-process)
-		  "/w"
+		  (concat path "/w")
 		  :function 'elserv-demo-weather)
   (elserv-publish (elserv-find-process)
-		  "/counter"
+		  (concat path "/counter")
 		  :function 'elserv-demo-counter)
   (elserv-publish (elserv-find-process)
-		  "/upload"
+		  (concat path "/upload")
 		  :function 'elserv-demo-upload)
   (elserv-publish (elserv-find-process)
-		  "/upload.html"
+		  (concat path "/upload.html")
 		  :string (encode-coding-string
-			   "<html><body>ファイルのアップロードじゃ<FORM ENCTYPE=\"multipart/form-data\" ACTION=\"/upload\" METHOD=\"POST\">
+			   (concat "<html><body>ファイルのアップロードじゃ<FORM ENCTYPE=\"multipart/form-data\" ACTION=\"" path "/upload\" METHOD=\"POST\">
 <INPUT TYPE=\"file\" NAME=\"graphics\"><br>
 <input type=\"submit\" value=\"送る\">
-</FORM></body></html>" 'iso-2022-jp)
+</FORM></body></html>") 'iso-2022-jp)
 		  :content-type "text/html; charset=iso-2022-jp")
   (elserv-publish (elserv-find-process)
-		  "/data"
+		  (concat path "/data")
 		  :directory "/usr/local/www/data")
   (elserv-publish (elserv-find-process) 
-		  "/logo.gif"
+		  (concat path "/logo.gif")
 		  :string
 		  (base64-decode-string
 "R0lGODdhvQBEAPcAAAAAAICAgEBEQLjA0FhgaFhgoEBEgHiAuNjg6CAgIKiwuDAwMFBQUH
@@ -408,6 +406,12 @@ yj7ku2BzHW2LvOeys1jE27B4ajIzWrEpjpUufQAn0cDYQjZ2ndLuDGfPT2Cn6sJ+2M8JDy
 bD3N5WcPAdiAUQYcUMaOkelqkpfTefNmf/Q6L8A7kvBYwRJh/xZ2vyPag8YzXz2jThJKc9
 GELyuzQvEqVRWM7/V0LyuODxkN13AktCRAYfjaRUIDiPli1fkxERAAOw==")
 		  :content-type "image/gif"))
+
+(defun elserv-demo-start (&optional port)
+  "Start a demo server."
+  (interactive (if current-prefix-arg
+		   (list (string-to-number (read-from-minibuffer "Port: ")))))
+  (elserv-demo-publish (elserv-start port) "/"))
 
 (require 'product)
 (product-provide (provide 'es-demo) (require 'elserv))

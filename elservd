@@ -14,6 +14,7 @@ if (ARGV.length != 5)
 end
 
 CRLF = "\r\n"
+STDOUT.binmode
 
 # Arguments:
 # port-number {log|nolog} max-children max-keep-alive keep-alive-timeout

@@ -114,6 +114,13 @@
   </body>
 </html>\n")
 
+(defvar elsesrv-wiki-compilation-finish-function
+  (cond
+   ((fboundp 'emacs-wiki-get-search-results)
+    'emacs-wiki-get-search-results)
+   ((fboundp 'emacs-wiki-wikify-search-results)
+    'emacs-wiki-wikify-search-results)))
+
 (defun elserv-wiki-interwiki-page ()
   (if emacs-wiki-interwiki-names
       (concat "- [["
@@ -245,7 +252,7 @@
   (setq emacs-wiki-search-term term
 	emacs-wiki-search-buffer nil
 	emacs-wiki-search-ready nil
-	compilation-finish-function 'emacs-wiki-get-search-results)
+	compilation-finish-function elsesrv-wiki-compilation-finish-function)
   (save-window-excursion
     (unwind-protect
 	(let ((max 500))
