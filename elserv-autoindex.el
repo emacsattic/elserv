@@ -105,9 +105,9 @@
     (setq files (directory-files directory nil
 				 "^\\([^.].+\\|\\.[^.].+\\|\\.\\..+\\)$"))
     (dolist (list elserv-autoindex-ignore-list)
-      (setq files (delete-if (lambda (string)
-			       (save-match-data (string-match list string)))
-			     files)))
+      (dolist (file files)
+	(if (save-match-data (string-match list file))
+	    (setq files (delete file files)))))
     (dolist (filename files)
       (let* ((realfile (expand-file-name filename directory))
 	     (icon (elserv-autoindex-get-attr realfile 'icon))

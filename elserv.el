@@ -70,7 +70,8 @@
   (require 'cl)
   (require 'static))
 
-(autoload 'elserv-autoindex "elserv-autoindex" nil t)
+(eval-and-compile
+  (autoload 'elserv-autoindex "elserv-autoindex" nil t))
 
 (product-provide 'elserv
   (product-define "Elserv" nil
