@@ -1,3 +1,8 @@
+2001-07-17  OHASHI Akira  <bg66@koka-in.org>
+
+        * elserv-autoindex.el (elserv-autoindex): Fix regexp.
+        (elserv-autoindex-get-icon): Fix directory handling.
+
 2001-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* es-wiki.el (elserv-wiki-search-page): Rewrite for latest emacs-wiki.
@@ -13,13 +18,13 @@
         contents to regexp.
         (elserv-autoindex): Follow changes above.
         (make-match-function): Abolish.
-        (elserv-autoindex-get-icon): Implement 'make-match-function'.
+        (elserv-autoindex-get-icon): Implement `make-match-function'.
 
         * elserv-autoindex.el (elserv-autoindex): Simplify parent directory
         handlings.
         (elserv-autoindex-get-attr): Ditto.
 
-        * es-monitor.el (toplevel): Require 'mcharset' and 'mcs-20'.
+        * es-monitor.el (toplevel): Require `mcharset' and `mcs-20'.
 
 2001-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 

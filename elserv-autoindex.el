@@ -101,7 +101,8 @@
 			    (elserv-autoindex-get-attr
 			     (expand-file-name ".." directory) 'lastmodified))
 		    (format "%7s" "-"))))
-    (setq files (directory-files directory nil "^\\([^.].*\\|\\.[^.].*\\)$"))
+    (setq files (directory-files directory nil
+				 "^\\([^.].+\\|\\.[^.].+\\|\\.\\..+\\)$"))
     (dolist (list elserv-autoindex-ignore-list)
       (setq files (delete-if (lambda (string)
 			       (save-match-data (string-match list string)))
@@ -154,17 +155,17 @@
 	  (format "%4.0fk" (/ size 1024.0)))
 	 (t size)))))))
 
-(defun elserv-autoindex-get-icon (filename &optional type)
+(defun elserv-autoindex-get-icon (filename type)
   "Return icon's filename or lable for FILENAME."
-  (let ((alist (or
-		(assoc-if
-		 (lambda (regexp)
-		   (save-match-data
-		     (string-match regexp (file-name-nondirectory filename))))
-		 elserv-autoindex-icon-alist)
-		(if (file-directory-p filename)
-		    '("directory" .
-		      (:label "DIR" :icon "folder.gif"))
+  (let ((alist (if (file-directory-p filename)
+		   '("directory" . (:label "DIR" :icon "folder.gif"))
+		 (or
+		  (assoc-if
+		   (lambda (regexp)
+		     (save-match-data
+		       (string-match regexp
+				     (file-name-nondirectory filename))))
+		   elserv-autoindex-icon-alist)
 		  '("unknown" . (:label "   " :icon "unknown.gif"))))))
     (plist-get (cdr alist) type)))
 
