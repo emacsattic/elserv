@@ -75,8 +75,8 @@
 
 (product-provide 'elserv
   (product-define "Elserv" nil
-		  '(0 3 1)
-		  "Miss Me Blind"))
+		  '(0 4 0)
+		  "Never Surrender"))
 
 (defgroup elserv nil
   "Elserv -- Yet another HTTP server on Emacsen."
