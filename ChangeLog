@@ -1,5 +1,7 @@
 2001-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* README.ja: Update.
+
 	* es-demo.el (elserv-demo-post-apropos): Fixed problem when no
 	apropos matched.
 
