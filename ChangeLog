@@ -1,5 +1,7 @@
 2001-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* COPYING: New file.
+
 	* es-wiki.el (elserv-wiki-function): Redirect "" to "/".
 
 	* es-mhc.el (elserv-mhc-function): Don't cause an error when
