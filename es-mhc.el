@@ -110,7 +110,7 @@ Example:
   :group 'elserv-mhc)
 
 (defvar elserv-mhc/path nil)
-(defvar elserv-mhc/icon-image-alista nil)
+(defvar elserv-mhc/icon-image-alist nil)
 
 (defun elserv-mhc-publish-image (process ppath path file)
   (let ((file (expand-file-name file elserv-mhc-icon-path)))
