@@ -1,3 +1,18 @@
+2001-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* es-wiki.el (elserv-wiki-function): Redirect "" to "/".
+
+	* es-mhc.el (elserv-mhc-function): Don't cause an error when
+	month is "".
+
+	* es-demo.el (elserv-demo-publish): Changed name for upload.
+
+	* elserv.el (elserv-make-redirect): Added argument `result'.
+	(elserv-service-directory): Follow change above.
+	(elserv-service-function): Don't redirect here.
+
+	* ELSERV-MK: Check whether ruby is installed or not.
+
 2001-07-17  OHASHI Akira  <bg66@koka-in.org>
 
         * elserv-autoindex.el (elserv-autoindex): Simplify.

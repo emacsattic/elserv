@@ -15,6 +15,9 @@
     (require 'install)
   (error (error "Please install APEL 8.7 or later.")))
 
+(or (exec-installed-p "ruby")
+    (error "Please install ruby first."))
+
 (defvar PREFIX install-prefix)
 (defvar LISP_BASE_DIR (install-detect-elisp-directory PREFIX))
 

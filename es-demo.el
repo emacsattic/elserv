@@ -279,7 +279,7 @@ PATH is the path to publish DEMO content."
 		  (concat path "/upload.html")
 		  :string (encode-coding-string
 			   (concat "<html><body>ファイルのアップロードじゃ<FORM ENCTYPE=\"multipart/form-data\" ACTION=\"" path "/upload\" METHOD=\"POST\">
-<INPUT TYPE=\"file\" NAME=\"graphics\"><br>
+<INPUT TYPE=\"file\" NAME=\"upload\"><br>
 <input type=\"submit\" value=\"送る\">
 </FORM></body></html>") 'iso-2022-jp)
 		  :content-type "text/html; charset=iso-2022-jp")

@@ -401,14 +401,17 @@ credentials (e.g., bad password), or your browser doesn't understand how to supp
       (elserv-version) "</body></html>"))
     result))
 
-(defun elserv-make-redirect (where)
-  "Redirect the client REQ to new location WHERE."
-  (elserv-make-result 'elserv-moved-permanently
-		      (list 'location where
-			    'content-type "text/html"
-			    'uri where)
-		      "<html><head><title>Moved permanently</title></head>
-<body><h1>Moved permanently</h1>This Page is moved permanently."))
+(defun elserv-make-redirect (result where)
+  "Make RESULT as a redirect to new location WHERE."
+  (elserv-set-result-code result 'elserv-moved-permanently)
+  (elserv-set-result-header result
+			    (list 'location where
+				  'content-type "text/html"
+				  'uri where))
+  (elserv-set-result-body result
+			  "<html><head><title>Moved permanently</title></head>
+<body><h1>Moved permanently</h1>This Page is moved permanently.</body>")
+  result)
 
 (defun elserv-version (&optional arg)
   "Return Elserv version.
@@ -1048,6 +1051,7 @@ REQUEST is the request structure (plist)."
 			      filename)))
 	  (cond ((file-directory-p filename)
 		 (elserv-make-redirect
+		  result
 		  (concat "http://" (plist-get request 'host)
 			  (unless (string= ppath "/") ppath)
 			  path "/")))
@@ -1116,25 +1120,21 @@ PATH is the path string relative from published path.
 PPATH is the published path string.
 REQUEST is the request structure (plist)."
   (let ((result (elserv-make-result)))
-    (if (string= path "")
-	(elserv-make-redirect
-	 (concat "http://" (plist-get request 'host)
-		 (unless (string= ppath "/") ppath)
-		 path "/"))
-      (or (elserv-check-predicate request predicate)
-	  (elserv-authenticate request auth result)
-	  (progn
-	    (funcall function result
-		     (elserv-url-decode-string path)
-		     ppath request)
+    (or (elserv-check-predicate request predicate)
+	(elserv-authenticate request auth result)
+	(progn
+	  (funcall function result
+		   (elserv-url-decode-string path)
+		   ppath request)
+	  (unless (elserv-result-code result)
 	    (elserv-set-result-code result 'elserv-ok)
 	    (unless (plist-get (elserv-result-header result) 'content-type)
 	      (elserv-set-result-header result
 					(append
 					 (elserv-result-header result)
 					 `(content-type ,(or content-type
-							     "text/plain")))))
-	    result)))))
+							     "text/plain"))))))
+	  result))))
 
 (defun elserv-package-publish (process path name)
   "Publish package.

@@ -255,23 +255,28 @@
       (kill-buffer (current-buffer)))))
   
 (defun elserv-wiki-function (result path ppath request)
-  (let ((emacs-wiki-serving-p t)
-	(emacs-wiki-publishing-footer elserv-wiki-publishing-footer))
-    (cond
-     ((string= path "/") ; default page.
-      (elserv-wiki-render-page result emacs-wiki-default-page))
-     ((string-match "\\`/wiki\\?\\(.+\\)" path)
-      (elserv-wiki-render-page result (match-string 1 path)))
-     ((string-match "\\`/editwiki\\?\\(.+\\)" path)
-      (elserv-wiki-edit-page result (match-string 1 path)))
-     ((string-match "\\`/changewiki\\?post" path)
-      (elserv-wiki-change-page result request))
-     ((string-match "\\`/searchwiki\\?get" path)
-      (elserv-wiki-search-input-page result))
-     ((string-match "\\`/searchwiki\\?q=\\(.+\\)" path)
-      (elserv-wiki-search-page result (match-string 1 path)))
-     (t (signal 'elserv-file-not-found
-		"Specified Wiki page was not found.")))))
+  (if (string= path "")
+      (elserv-make-redirect result 
+			    (concat "http://" (plist-get request 'host)
+				    (unless (string= ppath "/") ppath)
+				    path "/"))
+    (let ((emacs-wiki-serving-p t)
+	  (emacs-wiki-publishing-footer elserv-wiki-publishing-footer))
+      (cond
+       ((string= path "/") ; default page.
+	(elserv-wiki-render-page result emacs-wiki-default-page))
+       ((string-match "\\`/wiki\\?\\(.+\\)" path)
+	(elserv-wiki-render-page result (match-string 1 path)))
+       ((string-match "\\`/editwiki\\?\\(.+\\)" path)
+	(elserv-wiki-edit-page result (match-string 1 path)))
+       ((string-match "\\`/changewiki\\?post" path)
+	(elserv-wiki-change-page result request))
+       ((string-match "\\`/searchwiki\\?get" path)
+	(elserv-wiki-search-input-page result))
+       ((string-match "\\`/searchwiki\\?q=\\(.+\\)" path)
+	(elserv-wiki-search-page result (match-string 1 path)))
+       (t (signal 'elserv-file-not-found
+		  "Specified Wiki page was not found."))))))
 
 (defun elserv-wiki-publish (process path)
   "Publish Wiki service.
