@@ -1,0 +1,81 @@
+
+Elserv -- Yet Another HTTP Server on Emacsen
+
+Elserv は Emacs 上で常駐して動く HTTP サーバです。
+
+Emacs 自身にはサーバの機能がありませんので、専用のサーバプロセス
+(ruby スクリプト)をバックエンドで立ち上げ、そのプロセスと通信することに
+よってサーバ機能を実現しています。
+
+特徴：
+
+* Emacs lisp で動的コンテンツを作成できる。
+* コンテンツの置き換えは eval するだけで OK。
+* 非同期プロセスとして動作するので、サーバを動かしている Emacs 上でも
+  通常の作業が可能。
+* HTTP 1.1 GET, HEAD, POST に対応。
+
+必要なもの：
+
+* Emacs (Emacs 20 or XEmacs)
+* APEL, FLIM
+* ruby
+
+インストール：
+
+* アーカイブを適当なところで展開します。
+
+* サーバスクリプト elservd を実行パスの通ったところに置きます。
+  (必要なら１行目を書き換えます。)
+
+* elserv.el、elserv-demo.el をバイトコンパイルして（しなくてもいいですが）
+  load-path の通ったところに置きます。
+
+使い方：
+
+(require 'elserv) したあと関数 elserv-start を実行すると
+サーバが立ち上がります。
+デフォルトのままだとポート番号は 8000 番となります。
+そのままではほとんどコンテンツがありませんので、
+関数 elserv-publish を使ってコンテンツを登録します。
+
+"*Log of elserv*..." というバッファにアクセスログが残ります。
+
+関数 elserv-stop を実行するか、バッファ "*elserv*" を消すと
+サーバプロセスが終了します。
+
+サンプルサーバ：
+
+elserv-demo.el はデモ用のサンプルサーバです。
+ M-x load-library elserv-demo
+ M-x elserv-demo-start
+を実行するとデモサーバがポート番号 8000 番で立ち上がります。
+てきとうなブラウザから http://ホスト名:8000 のようにアクセスすると
+デモページが見えるはずです。
+
+elserv-wiki.el は emacs-wiki を使った Wiki サーバです。
+
+remote.el は web ブラウザ経由で Emacs を操作するためのサーバです。
+
+web-custom.el は web ブラウザ経由で Emacs をカスタマイズするための
+サーバです。
+
+elserv-mhc.el は MHC を使ったスケジュールサーバです。
+
+性能評価：
+
+http_load による評価
+
+% http_load -parallel 10 -seconds 2 elserv-test
+171 fetches, 10 max parallel, 191349 bytes, in 2.00573 seconds
+1119 mean bytes/connection
+85.2557 fetches/sec, 95401.1 bytes/sec
+msecs/connect: 0.203205 mean, 1.205 max, 0.082 min
+msecs/first-response: 77.3926 mean, 133.693 max, 27.229 min
+(localhost から localhost に対するアクセス。
+ elserv-demo のトップページを対象とした。
+ 環境：Celeron 400MHz, FreeBSD 3.5.1, Emacs 21)
+
+--
+Yuuichi Teranishi <teranisi@gohome.org>
+
