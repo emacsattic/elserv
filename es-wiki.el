@@ -281,7 +281,7 @@
   (let ((emacs-wiki-serving-p t)
 	(emacs-wiki-publishing-footer elserv-wiki-publishing-footer))
     (cond
-     ((eq (length path) 0) ; default page.
+     ((string= path "/") ; default page.
       (elserv-wiki-render-page result emacs-wiki-default-page))
      ((string-match "\\`/wiki\\?\\(.+\\)" path)
       (elserv-wiki-render-page result (match-string 1 path)))
@@ -300,7 +300,7 @@
   "Publish Wiki service.
 PROCESS is the elserv server process.
 PATH is the path to publish Wiki content."
-  (elserv-publish process "/" :function 'elserv-wiki-function))
+  (elserv-publish process path :function 'elserv-wiki-function))
 
 (defun elserv-wiki-start (&optional port)
   "Start a Wiki Server."

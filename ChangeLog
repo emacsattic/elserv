@@ -1,3 +1,30 @@
+2001-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elserv-autoindex.el (elserv-autoindex-http-header): Don't hard code
+	icon path.
+	(elserv-autoindex-get-icon): Ditto.
+	(elserv-autoindex-icon-alist): Ditto;
+	Renamed from elserv-autoindex-icon-alist.
+	(elserv-autoindex-list-format): Added space.
+	(elserv-autoindex): Use elserv-icon-publish-path.
+	(elserv-autoindex-get-attr): Ditto.
+	(elserv-autoindex-get-attr): Bind system-time-locale as "C".
+	(elserv-autoindex-get-icon): Renamed
+
+	* elserv.el (elserv-directory-autoindex): New variable
+	(Renamed from elserv-options-indexes).
+	(elserv-icon-path): New variable.
+	(elserv-icon-publish-path): Ditto.
+	(elserv-server-eol): Define as constant.
+	(elserv-client-eor): Ditto.
+	(elserv-service-directory): Fixed.
+	(elserv-service-function): Fixed.
+	(elserv-publish-default): Publish elserv-icon-path on
+	elserv-icon-publish-path.
+
+	* es-wiki.el (elserv-wiki-function): Fixed default page detection.
+	(elserv-wiki-publish): Fixed.
+
 2001-07-15  OHASHI Akira  <bg66@koka-in.org>
 
         * elserv.el (toplevel): Autoload  `elserv-autoindex'.

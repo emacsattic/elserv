@@ -33,11 +33,11 @@
  </HEAD>
  <BODY>
 <H1>Index of %s</H1>
-<PRE><IMG SRC=\"/icons/blank.gif\" ALT=\"     \"> <A HREF=\"?N=D\">Name</A>                    <A HREF=\"?M=A\">Last modified</A>       <A HREF=\"?S=A\">Size</A>  <A HREF=\"?D=A\">Description</A>
+<PRE><IMG SRC=\"%s/blank.gif\" ALT=\"     \"> <A HREF=\"?N=D\">Name</A>                     <A HREF=\"?M=A\">Last modified</A>       <A HREF=\"?S=A\">Size</A>  <A HREF=\"?D=A\">Description</A>
 <HR>\n")
 
 (defvar elserv-autoindex-list-format
-  "<IMG SRC=\"%s\" ALT=\"[%s]\"> <A HREF=\"%s\">%s</A>%s%s  \n")
+  "<IMG SRC=\"%s\" ALT=\"[%s]\"> <A HREF=\"%s\">%s</A> %s%s  \n")
 
 (defvar elserv-autoindex-http-footer
   "</PRE><HR>
@@ -46,40 +46,40 @@
 
 (defvar elserv-autoindex-ignore-list '("." ".htaccess" "CVS" "RCS"))
 
-(defvar elserv-autoindex-icons-alist
-  '(("\\.css$"    . (:label "TXT" :icon "/icons/text.gif"))
-    ("\\.html?$"  . (:label "TXT" :icon "/icons/text.gif"))
-    ("\\.txt$"    . (:label "TXT" :icon "/icons/text.gif"))
-    ("\\.jpe?g$"  . (:label "IMG" :icon "/icons/image2.gif"))
-    ("\\.gif$"    . (:label "IMG" :icon "/icons/image2.gif"))
-    ("\\.png$"    . (:label "IMG" :icon "/icons/image2.gif"))
-    ("\\.tiff?$"  . (:label "IMG" :icon "/icons/image2.gif"))
-    ("\\.x[bp]m$" . (:label "IMG" :icon "/icons/image2.gif"))
-    ("\\.gz$"     . (:label "   " :icon "/icons/compressed.gif"))
-    ("\\.z$"      . (:label "CMP" :icon "/icons/compressed.gif"))
-    ("\\.e?ps$"   . (:label "   " :icon "/icons/a.gif"))
-    ("\\.tex$"    . (:label "   " :icon "/icons/tex.gif"))
-    ("\\.dvi$"    . (:label "   " :icon "/icons/dvi.gif"))
-    ("\\.pdf$"    . (:label "   " :icon "/icons/layout.gif"))
-    ("\\.tar$"    . (:label "   " :icon "/icons/tar.gif"))
-    ("\\.zip$"    . (:label "   " :icon "/icons/compressed.gif"))
-    ("\\.lzh$"    . (:label "   " :icon "/icons/compressed.gif"))
-    ("\\.mp[23]$" . (:label "SND" :icon "/icons/sound2.gif"))
-    ("\\.midi?$"  . (:label "SND" :icon "/icons/sound2.gif"))
-    ("\\.wav$"    . (:label "SND" :icon "/icons/sound2.gif"))
-    ("\\.au$"     . (:label "SND" :icon "/icons/sound2.gif"))
-    ("\\.ram$"    . (:label "SND" :icon "/icons/sound2.gif"))
-    ("\\.r[am]$"  . (:label "SND" :icon "/icons/sound2.gif"))
-    ("\\.mpe?g$"  . (:label "VID" :icon "/icons/movie.gif"))
-    ("\\.qt$"     . (:label "VID" :icon "/icons/movie.gif"))
-    ("\\.mov$"    . (:label "VID" :icon "/icons/movie.gif"))
-    ("\\.avi$"    . (:label "VID" :icon "/icons/movie.gif"))
-    ("^core$"     . (:label "   " :icon "/icons/bomb.gif"))
-    ("\\.c$"      . (:label "   " :icon "/icons/c.gif"))
-    ("\\.p[ly]$"  . (:label "   " :icon "/icons/p.gif"))
-    ("\\.sh$"     . (:label "   " :icon "/icons/script.gif"))
-    ("\\.bin$"    . (:label "   " :icon "/icons/binary.gif"))
-    ("\\.exe$"    . (:label "   " :icon "/icons/binary.gif"))))
+(defvar elserv-autoindex-icon-alist
+  '(("\\.css$"    . (:label "TXT" :icon "text.gif"))
+    ("\\.html?$"  . (:label "TXT" :icon "text.gif"))
+    ("\\.txt$"    . (:label "TXT" :icon "text.gif"))
+    ("\\.jpe?g$"  . (:label "IMG" :icon "image2.gif"))
+    ("\\.gif$"    . (:label "IMG" :icon "image2.gif"))
+    ("\\.png$"    . (:label "IMG" :icon "image2.gif"))
+    ("\\.tiff?$"  . (:label "IMG" :icon "image2.gif"))
+    ("\\.x[bp]m$" . (:label "IMG" :icon "image2.gif"))
+    ("\\.gz$"     . (:label "   " :icon "compressed.gif"))
+    ("\\.z$"      . (:label "CMP" :icon "compressed.gif"))
+    ("\\.e?ps$"   . (:label "   " :icon "a.gif"))
+    ("\\.tex$"    . (:label "   " :icon "tex.gif"))
+    ("\\.dvi$"    . (:label "   " :icon "dvi.gif"))
+    ("\\.pdf$"    . (:label "   " :icon "layout.gif"))
+    ("\\.tar$"    . (:label "   " :icon "tar.gif"))
+    ("\\.zip$"    . (:label "   " :icon "compressed.gif"))
+    ("\\.lzh$"    . (:label "   " :icon "compressed.gif"))
+    ("\\.mp[23]$" . (:label "SND" :icon "sound2.gif"))
+    ("\\.midi?$"  . (:label "SND" :icon "sound2.gif"))
+    ("\\.wav$"    . (:label "SND" :icon "sound2.gif"))
+    ("\\.au$"     . (:label "SND" :icon "sound2.gif"))
+    ("\\.ram$"    . (:label "SND" :icon "sound2.gif"))
+    ("\\.r[am]$"  . (:label "SND" :icon "sound2.gif"))
+    ("\\.mpe?g$"  . (:label "VID" :icon "movie.gif"))
+    ("\\.qt$"     . (:label "VID" :icon "movie.gif"))
+    ("\\.mov$"    . (:label "VID" :icon "movie.gif"))
+    ("\\.avi$"    . (:label "VID" :icon "movie.gif"))
+    ("^core$"     . (:label "   " :icon "bomb.gif"))
+    ("\\.c$"      . (:label "   " :icon "c.gif"))
+    ("\\.p[ly]$"  . (:label "   " :icon "p.gif"))
+    ("\\.sh$"     . (:label "   " :icon "script.gif"))
+    ("\\.bin$"    . (:label "   " :icon "binary.gif"))
+    ("\\.exe$"    . (:label "   " :icon "binary.gif"))))
 
 (defun elserv-autoindex (host path directory)
   "Handles the on-the-fly html index generation."
@@ -114,7 +114,8 @@
     (elserv-set-result-body
      result
      (concat
-      (format elserv-autoindex-http-header path path)
+      (format elserv-autoindex-http-header path path
+	      elserv-icon-publish-path)
       string
       (format elserv-autoindex-http-footer (elserv-version) host port)))
     result))
@@ -124,9 +125,10 @@
   (let ((realfile (expand-file-name filename directory)))
     (cond
      ((eq type 'icon)
-      (if (string= filename "..")
-	  "/icons/back.gif"
-	(elserv-autoindex-get-icon realfile ':icon)))
+      (concat elserv-icon-publish-path "/"
+	      (if (string= filename "..")
+		  "back.gif"
+		(elserv-autoindex-get-icon realfile ':icon))))
      ((eq type 'label)
       (elserv-autoindex-get-icon realfile ':label))
      ((eq type 'name)
@@ -134,7 +136,8 @@
 	  "Parent Directory"
 	filename))
      ((eq type 'lastmodified)
-      (format-time-string "%d-%b-%Y %R" (nth 5 (file-attributes realfile))))
+      (let ((system-time-locale "C"))
+	(format-time-string "%d-%b-%Y %R" (nth 5 (file-attributes realfile)))))
      ((eq type 'size)
       (if (file-directory-p realfile)
 	  "-"
@@ -155,11 +158,11 @@
   (let ((alist (or
 		(assoc-if
 		 (make-match-function (file-name-nondirectory filename))
-		 elserv-autoindex-icons-alist)
+		 elserv-autoindex-icon-alist)
 		(if (file-directory-p filename)
 		    '("directory" .
-		      (:label "DIR" :icon "/icons/folder.gif"))
-		  '("unknown" . (:label "   " :icon "/icons/unknown.gif"))))))
+		      (:label "DIR" :icon "folder.gif"))
+		  '("unknown" . (:label "   " :icon "unknown.gif"))))))
     (plist-get (cdr alist) type)))
 
 (provide 'elserv-autoindex)

@@ -96,6 +96,10 @@
 (defvar elserv-directory-index-file "index.html"
   "*Index file for the directory.")
 
+(defvar elserv-directory-autoindex t
+  "*If Non-nil and directory has no index file, generate html index in the
+directory.")
+
 (defvar elserv-keep-alive t
   "*Non-nil enable persistent connections.
 \(more than one request per connection\).")
@@ -122,9 +126,11 @@ If this limit is ever reached, clients will be LOCKED OUT.")
 (defvar elserv-access-log-max-size 50000
   "*Max size of access log file.")
 
-(defvar elserv-options-indexes nil
-  "*If Non-nil and directory has no index file, generate html index in the
-directory.")
+(defvar elserv-icon-path nil
+  "*Icon directory path.")
+
+(defvar elserv-icon-publish-path "/icons"
+  "*Path to publish an icon directory specified by `elserv-icon-path'.")
 
 (defconst elserv-url-unreserved-chars
   '(?a ?b ?c ?d ?e ?f ?g ?h ?i ?j ?k ?l ?m
@@ -136,10 +142,10 @@ directory.")
 
 (defconst elserv-http-version "HTTP/1.1")
 
-(defvar elserv-server-eol "\r\n"
-  "The EOL string sent from the server.")
+(defconst elserv-server-eol "\r\n"
+  "The end-of-line string sent from the server.")
 
-(defvar elserv-client-eor "\r\n\r\n"
+(defconst elserv-client-eor "\r\n\r\n"
   "The end-of-request string sent from the elservd.")
 
 (defvar elserv-buffer-publish-hash nil)
@@ -988,7 +994,9 @@ REQUEST is the request structure (plist)."
 			      filename)))
 	  (cond ((file-directory-p filename)
 		 (elserv-make-redirect
-		  (concat "http://" (plist-get request 'host) ppath path "/")))
+		  (concat "http://" (plist-get request 'host)
+			  (unless (string= ppath "/") ppath)
+			  path "/")))
 		((setq realfile
 		       (elserv-find-file filename (plist-get 
 						   request
@@ -1008,13 +1016,17 @@ REQUEST is the request structure (plist)."
 					    realfile)
 					   (buffer-string)))
 		 result)
-		((and elserv-options-indexes
+		((and elserv-directory-autoindex
 		      (string= elserv-directory-index-file
-			     (file-name-nondirectory filename)))
+			       (file-name-nondirectory filename)))
 		 (elserv-autoindex
-		  (plist-get request 'host) (concat ppath path)
+		  (plist-get request 'host) (concat
+					     (unless (string= ppath "/") ppath)
+					     path)
 		  (file-name-directory filename)))
-		(t (signal 'elserv-file-not-found (concat ppath path))))))))
+		(t (signal 'elserv-file-not-found
+			   (concat (unless (string= ppath "/") ppath)
+				   path))))))))
 
 (defun elserv-service-string (auth predicate string content-type path ppath
 				   request)
@@ -1047,11 +1059,13 @@ PATH is the path string relative from published path.
 PPATH is the published path string.
 REQUEST is the request structure (plist)."
   (let ((result (elserv-make-result)))
+    (if (string= path "") (setq path "/"))
     (or (elserv-check-predicate request predicate)
 	(elserv-authenticate request auth result)
 	(progn
 	  (funcall function result
-		   (elserv-url-decode-string path) ppath request)
+		   (elserv-url-decode-string path)
+		   ppath request)
 	  (elserv-set-result-code result 'elserv-ok)
 	  (unless (plist-get (elserv-result-header result) 'content-type)
 	    (elserv-set-result-header result
@@ -1073,11 +1087,14 @@ NAME is the name of the package to publish."
       (error "Cannot publish as package: %s." name))))
 
 (defun elserv-publish-default (process)
-  "Publish tiny default page for PROCESS."
-  (elserv-publish process "/"
-		  :string "Hello World."
-		  :content-type "text/html"))
-
+  "Publish default pages for PROCESS."
+  (elserv-publish process "/" :string "Hello World." :content-type "text/html")
+  ;; Publish icons.
+  (if (and elserv-icon-path
+	   (file-directory-p elserv-icon-path))
+      (elserv-publish process elserv-icon-publish-path
+		      :directory elserv-icon-path)))
+  
 (provide 'elserv)
 
 ;;; elserv.el ends here
