@@ -28,7 +28,8 @@
 ;; (defun hello (p)
 ;;   (format "Hello, %s." p))
 ;; To register above function hello as "example.hello", evaluate following.
-;; (elserv-xmlrpc-register "example.hello" 'hello '("string" "string") "ISO-2022-JP")
+;; (elserv-xmlrpc-register "example.hello" 'hello
+;;                         '(("string" "string")) "ISO-2022-JP")
 ;; 1st argument is the method name to register.
 ;; 2nd argument is the function that corresponds.
 ;; 3rd argument is the signature for the method.
