@@ -1,3 +1,7 @@
+2001-07-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* es-monitor.el (elserv-monitor-function): Reject if path is not root.
+
 2001-07-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elserv-xmlrpc.el: Fixed comment.

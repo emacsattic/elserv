@@ -29,6 +29,8 @@
 (require 'elserv)
 
 (defun elserv-monitor-function (result path ppath request)
+  (unless (or (eq (length path) 0) (string= path "/"))
+    (signal 'elserv-forbidden (concat "Access to " path " is not allowed.")))
   (let (paths content charset)
     (mapatoms
      (lambda (x)
