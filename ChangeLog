@@ -1,3 +1,17 @@
+2001-12-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* es-demo.el (elserv-demo-publish): Don't publish
+	`/usr/local/www.data'.
+
+	* elserv.el (elserv-search-add-directory-index): Make index only when
+	directory exists.
+
+	* ELSERV_ELS: Added xml dependency.
+
+2001-11-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* es-demo.el (elserv-demo-calendar): Fixed result code.
+
 2001-07-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* es-monitor.el (elserv-monitor-function): Reject if path is not root.
@@ -8,18 +22,18 @@
 
 2001-07-30  OHASHI Akira  <bg66@koka-in.org>
 
-        * ELSERV-ELS (elserv-modules-to-compile): Add elserv-negotiation.
+	* ELSERV-ELS (elserv-modules-to-compile): Add elserv-negotiation.
 
-        * elserv.el (toplevel): Add autoload setting for elserv-negotiation.
-        (elserv-use-negotiation): New variable.
-        (elserv-parse-accept-language): Move to `elserv-negotiation.el' and
-        Rename to `elserv-negotiation-language'.
-        (elserv-find-file): Move to `elserv-negotiation.el' and Rename to
-        `elserv-negotiation'.
-        (elserv-service-directory): if `elserv-use-negotiation' is non-nil,
-        handle the content negotiation.
+	* elserv.el (toplevel): Add autoload setting for elserv-negotiation.
+	(elserv-use-negotiation): New variable.
+	(elserv-parse-accept-language): Move to `elserv-negotiation.el' and
+	Rename to `elserv-negotiation-language'.
+	(elserv-find-file): Move to `elserv-negotiation.el' and Rename to
+	`elserv-negotiation'.
+	(elserv-service-directory): if `elserv-use-negotiation' is non-nil,
+	handle the content negotiation.
 
-        * elserv-negotiation.el: New file.
+	* elserv-negotiation.el: New file.
 
 2001-07-27  Yuuichi Teranishi  <teranisi@gohome.org>
 

@@ -1236,8 +1236,9 @@ NAME is the name of the package to publish."
 	      path ":" (or index "") "\n"))))
 
 (defun elserv-search-add-directory-index (buffer ppath dir)
-  (dolist (file (elserv-search-list-files dir))
-    (elserv-search-add-index buffer ppath file nil)))
+  (when (file-exists-p dir)
+    (dolist (file (elserv-search-list-files dir))
+      (elserv-search-add-index buffer ppath file nil))))
 
 (defun elserv-search (regexp)
   "Search content which matches REGEXP."

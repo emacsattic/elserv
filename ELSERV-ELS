@@ -19,8 +19,10 @@
 		       (nconc elserv-modules-to-compile i-modules))
 	       (setq elserv-modules-not-to-compile
 		     (nconc elserv-modules-not-to-compile i-modules))))))
-	'((emacs-wiki	es-wiki)
+	'((emacs-wiki 	es-wiki)
 	  (mhc		es-mhc)
+	  (xml		elserv-xmlrpc)
+	  (xml		es-xmlrpc)
 	  ;; Add modules with dependency here.
 	  ))
 

@@ -56,7 +56,7 @@
 	  (setq next-month 1))
       (setq next-year year)
       (setq next-month (+ month 1)))
-    (elserv-set-result-code result 200)
+    (elserv-set-result-code result 'elserv-ok)
     (elserv-set-result-header result '(content-type "text/html"))
     (elserv-set-result-body
      result
@@ -285,9 +285,6 @@ PATH is the path to publish DEMO content."
 <input type=\"submit\" value=\"送る\">
 </FORM></body></html>") 'iso-2022-jp)
 		  :content-type "text/html; charset=iso-2022-jp")
-  (elserv-publish (elserv-find-process)
-		  (concat path "/data")
-		  :directory "/usr/local/www/data")
   (elserv-publish (elserv-find-process) 
 		  (concat path "/logo.gif")
 		  :string
