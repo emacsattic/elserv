@@ -26,7 +26,6 @@
 
 ;;; Code:
 (require 'mcharset)
-(require 'mcs-20)
 (require 'elserv)
 
 (defun elserv-monitor-function (result path ppath request)

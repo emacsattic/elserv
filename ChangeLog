@@ -1,3 +1,12 @@
+2001-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* es-wiki.el (elserv-wiki-search-page): Rewrite for latest emacs-wiki.
+	(elsesrv-wiki-compilation-finish-function): Removed.
+
+	* elserv.el (elserv-service-function): Redirect "" to "/".
+
+	* es-monitor.el: Removed "(require 'mcs-20)".
+
 2001-07-16  OHASHI Akira  <bg66@koka-in.org>
 
         * elserv-autoindex.el (elserv-autoindex-ignore-list): Change list

@@ -1105,21 +1105,25 @@ PATH is the path string relative from published path.
 PPATH is the published path string.
 REQUEST is the request structure (plist)."
   (let ((result (elserv-make-result)))
-    (if (string= path "") (setq path "/"))
-    (or (elserv-check-predicate request predicate)
-	(elserv-authenticate request auth result)
-	(progn
-	  (funcall function result
-		   (elserv-url-decode-string path)
-		   ppath request)
-	  (elserv-set-result-code result 'elserv-ok)
-	  (unless (plist-get (elserv-result-header result) 'content-type)
-	    (elserv-set-result-header result
-				      (append
-				       (elserv-result-header result)
- 				       `(content-type ,(or content-type
-							   "text/plain")))))
-	  result))))
+    (if (string= path "")
+	(elserv-make-redirect
+	 (concat "http://" (plist-get request 'host)
+		 (unless (string= ppath "/") ppath)
+		 path "/"))
+      (or (elserv-check-predicate request predicate)
+	  (elserv-authenticate request auth result)
+	  (progn
+	    (funcall function result
+		     (elserv-url-decode-string path)
+		     ppath request)
+	    (elserv-set-result-code result 'elserv-ok)
+	    (unless (plist-get (elserv-result-header result) 'content-type)
+	      (elserv-set-result-header result
+					(append
+					 (elserv-result-header result)
+					 `(content-type ,(or content-type
+							     "text/plain")))))
+	    result)))))
 
 (defun elserv-package-publish (process path name)
   "Publish package.

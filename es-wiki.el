@@ -114,13 +114,6 @@
   </body>
 </html>\n")
 
-(defvar elsesrv-wiki-compilation-finish-function
-  (cond
-   ((fboundp 'emacs-wiki-get-search-results)
-    'emacs-wiki-get-search-results)
-   ((fboundp 'emacs-wiki-wikify-search-results)
-    'emacs-wiki-wikify-search-results)))
-
 (defun elserv-wiki-interwiki-page ()
   (if emacs-wiki-interwiki-names
       (concat "- [["
@@ -249,33 +242,17 @@
       (elserv-set-result-body result (buffer-string)))))
 
 (defun elserv-wiki-search-page (result term)
-  (setq emacs-wiki-search-term term
-	emacs-wiki-search-buffer nil
-	emacs-wiki-search-ready nil
-	compilation-finish-function elsesrv-wiki-compilation-finish-function)
-  (save-window-excursion
-    (unwind-protect
-	(let ((max 500))
-	  ;; run the grep/glimpse/whatever
-	  (emacs-wiki-grep emacs-wiki-search-term)
-	  ;; give the grep time to complete
-	  (while (and (> max 0)
-		      (null emacs-wiki-search-ready))
-	    (sit-for 0 250)
-	    (setq max (1- max)))
-	  (if (= max 0)
-	      (signal 'elserv-unavailable
-		      "Search exceeded time limit")
-	    (with-current-buffer emacs-wiki-search-buffer
-	      (emacs-wiki-replace-markup "Search Results")
-	      (elserv-set-result-header
-	       result
-	       (list 'content-type "text/html;charset=iso-2022-jp"))
-	      (elserv-set-result-body result
-				      (encode-coding-string
-				       (buffer-string) 'iso-2022-jp))
-	      (kill-buffer (current-buffer)))))
-      (setq compilation-finish-function nil))))
+  (let ((compilation-scroll-output nil))
+    (with-current-buffer (emacs-wiki-grep term)
+      (emacs-wiki-wikify-search-results term)
+      (emacs-wiki-replace-markup "Search Results")
+      (elserv-set-result-header
+       result
+       (list 'content-type "text/html;charset=iso-2022-jp"))
+      (elserv-set-result-body result
+			      (encode-coding-string
+			       (buffer-string) 'iso-2022-jp))
+      (kill-buffer (current-buffer)))))
   
 (defun elserv-wiki-function (result path ppath request)
   (let ((emacs-wiki-serving-p t)
