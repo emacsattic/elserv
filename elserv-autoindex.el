@@ -133,7 +133,7 @@
     result))
 
 (defun elserv-autoindex-get-attr (realfile type)
-  "Return attribute of REALFILE."
+  "Return TYPE attribute of REALFILE."
   (cond
    ((eq type 'icon)
     (concat elserv-icon-publish-path "/"

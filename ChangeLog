@@ -10,6 +10,8 @@
         handlings.
         (elserv-autoindex-get-attr): Ditto.
 
+        * es-monitor.el (toplevel): Require 'mcharset' and 'mcs-20'.
+
 2001-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* es-monitor.el: New file.
