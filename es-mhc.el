@@ -1,4 +1,4 @@
-;;; elserv-mhc.el -- Elserv interface for MHC.
+;;; es-mhc.el -- Elserv interface for MHC.
 
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -495,6 +495,6 @@ PATH is the path to publish MHC content."
   (message "Access 'http://%s:%d/' to get your schedule."
 	   (system-name) (or port elserv-mhc-default-port)))
 
-(provide 'elserv-mhc)
+(provide 'es-mhc)
 
-;;; elserv-mhc.el ends here
+;;; es-mhc.el ends here

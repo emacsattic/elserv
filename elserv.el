@@ -44,7 +44,6 @@
 ;; (elserv-publish (elserv-find-process 8080) "/"
 ;;                 :string "Hello World."
 ;;                 :content-type "text/plain")
-;; elserv-demo.el is a sample demo server.
 
 ;;; History:
 ;;

@@ -28,7 +28,7 @@ Emacs 自身にはサーバの機能がありませんので、専用のサーバプロセス
 * サーバスクリプト elservd を実行パスの通ったところに置きます。
   (必要なら１行目を書き換えます。)
 
-* elserv.el、elserv-demo.el をバイトコンパイルして（しなくてもいいですが）
+* elserv.el をバイトコンパイルして（しなくてもいいですが）
   load-path の通ったところに置きます。
 
 使い方：
@@ -44,23 +44,14 @@ Emacs 自身にはサーバの機能がありませんので、専用のサーバプロセス
 関数 elserv-stop を実行するか、バッファ "*elserv*" を消すと
 サーバプロセスが終了します。
 
-サンプルサーバ：
+アプリケーション：
 
-elserv-demo.el はデモ用のサンプルサーバです。
- M-x load-library elserv-demo
- M-x elserv-demo-start
-を実行するとデモサーバがポート番号 8000 番で立ち上がります。
-てきとうなブラウザから http://ホスト名:8000 のようにアクセスすると
-デモページが見えるはずです。
+es-demo.el: デモ用のサンプルサーバです。
+es-wiki.el: emacs-wiki を使った Wiki サーバです。
+es-mhc.el:  MHC を使ったスケジュールサーバです。
 
-elserv-wiki.el は emacs-wiki を使った Wiki サーバです。
-
-remote.el は web ブラウザ経由で Emacs を操作するためのサーバです。
-
-web-custom.el は web ブラウザ経由で Emacs をカスタマイズするための
-サーバです。
-
-elserv-mhc.el は MHC を使ったスケジュールサーバです。
+remote.el:     web ブラウザ経由で Emacs を操作するためのサーバです。
+web-custom.el: web ブラウザ経由で Emacs をカスタマイズするためのサーバです。
 
 性能評価：
 

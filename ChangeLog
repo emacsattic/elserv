@@ -1,5 +1,16 @@
 2001-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elserv.el: Removed comment for elserv-demo.el.
+
+	* elserv-mhc.el, elserv-wiki.el, elserv-demo.el: Deleted (Renamed).
+
+	* es-demo.el: Renamed from elserv-demo.el.
+
+	* es-mhc.el: Renamed from elserv-mhc.el.
+
+	* es-wiki.el: Renamed from elserv-wiki.el.
+	(elserv-wiki-function): Renamed from `elserv-wiki'.
+
 	* elserv.el (elserv-parse-path): Changed behavior like XEmacs.
 	(elserv-service): Changed path analyse process.
 	path always starts with '/'.

@@ -1,4 +1,4 @@
-;;; elserv-wiki.el -- Elserv interface for emacs-wiki.
+;;; es-wiki.el -- Elserv interface for emacs-wiki.
 
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -270,7 +270,7 @@
 	      (kill-buffer (current-buffer)))))
       (setq compilation-finish-function nil))))
   
-(defun elserv-wiki (result path ppath request)
+(defun elserv-wiki-function (result path ppath request)
   (let ((emacs-wiki-serving-p t)
 	(emacs-wiki-publishing-footer elserv-wiki-publishing-footer))
     (cond
@@ -293,8 +293,9 @@
   "Start a Wiki Server."
   (interactive (if current-prefix-arg
 		   (list (string-to-number (read-from-minibuffer "Port: ")))))
-  (elserv-publish (elserv-start port) "/" :function 'elserv-wiki))
+  (elserv-publish (elserv-start port) "/" :function 'elserv-wiki-function))
 
-(provide 'elserv-wiki)
+(require 'product)
+(product-provide (provide 'es-wiki) (require 'elserv))
 
-;;; elserv-wiki.el ends here
+;;; es-wiki.el ends here

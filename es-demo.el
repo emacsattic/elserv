@@ -1,4 +1,4 @@
-;;; elserv-demo.el -- Elserv demo.
+;;; es-demo.el -- Elserv demo.
 
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -410,6 +410,6 @@ GELyuzQvEqVRWM7/V0LyuODxkN13AktCRAYfjaRUIDiPli1fkxERAAOw==")
 		  :content-type "image/gif"))
 
 (require 'product)
-(product-provide (provide 'elserv-demo) (require 'elserv))
+(product-provide (provide 'es-demo) (require 'elserv))
 
-;;; elserv-demo.el ends here
+;;; es-demo.el ends here
