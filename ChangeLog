@@ -1,5 +1,11 @@
 2001-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elserv.el (elserv-package-publish): New function.
+
+	* es-wiki.el (elserv-wiki-publish): New function.
+
+	* es-mhc.el: Provide es-mhc with product-provide.
+
 	* elserv.el: Removed comment for elserv-demo.el.
 
 	* elserv-mhc.el, elserv-wiki.el, elserv-demo.el: Deleted (Renamed).

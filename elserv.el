@@ -1039,6 +1039,17 @@ REQUEST is the request structure (plist)."
 							   "text/plain")))))
 	  result))))
 
+(defun elserv-package-publish (process path name)
+  "Publish package.
+PROCESS is the server process of Elserv.
+PATH is the path to publish.
+NAME is the name of the package to publish."
+  (require (intern (concat "es-" name)))
+  (let ((sym (intern (concat "elserv-" name "-publish"))))
+    (if (fboundp sym)
+	(funcall sym process path)
+      (error "Cannot publish as package: %s." name))))
+
 (defun elserv-publish-default (process)
   "Publish tiny default page for PROCESS."
   (elserv-publish process "/"

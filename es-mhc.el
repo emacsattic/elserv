@@ -495,6 +495,7 @@ PATH is the path to publish MHC content."
   (message "Access 'http://%s:%d/' to get your schedule."
 	   (system-name) (or port elserv-mhc-default-port)))
 
-(provide 'es-mhc)
+(require 'product)
+(product-provide (provide 'es-mhc) (require 'elserv))
 
 ;;; es-mhc.el ends here

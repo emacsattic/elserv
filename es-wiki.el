@@ -289,6 +289,12 @@
      (t (signal 'elserv-file-not-found
 		"Specified Wiki page was not found.")))))
 
+(defun elserv-wiki-publish (process path)
+  "Publish Wiki service.
+PROCESS is the elserv server process.
+PATH is the path to publish Wiki content."
+  (elserv-publish process "/" :function 'elserv-wiki-function))
+
 (defun elserv-wiki-start (&optional port)
   "Start a Wiki Server."
   (interactive (if current-prefix-arg
